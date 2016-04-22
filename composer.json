@@ -1,0 +1,18 @@
+{
+    "name": "fnvi/api",
+    "description": "This is an underlying api to be used for the FNVi project. It will provide the base layers for working with objects from Mongo and will be extended",
+    "authors": [
+        {
+            "name": "Joe Wheatley",
+            "email": "joew@fnvi.co.uk"
+        }
+    ],
+    "require": {
+        "mongodb/mongodb": "1.0.0"
+    },
+    "autoload":{
+        "psr-4":{
+            "FNVi\\API\\":"src"
+        }
+    }
+}
