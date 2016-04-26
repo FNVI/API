@@ -10,6 +10,9 @@
     "require": {
         "mongodb/mongodb": "1.0.0"
     },
+    "require-dev": {
+        "phpunit/phpunit": "4.0.*"
+    },
     "autoload":{
         "psr-4":{
             "FNVi\\API\\":"src"
