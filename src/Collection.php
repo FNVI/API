@@ -48,6 +48,14 @@ class Collection extends Database {
         $this->collection = $this->setCollection($this->collectionName);
     }
     
+    public function includeDeleted(){
+        $this->query = [];
+    }
+    
+    public function onlyDeleted(){
+        $this->query += ["active"=>false];
+    }
+    
     /**
      * Gets a query object.
      * 
