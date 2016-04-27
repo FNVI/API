@@ -33,6 +33,8 @@ class Collection extends Database {
      */
     protected $collectionName;
     
+    protected $query = ["active" => true];
+
     /**
      * Creates the collection object.
      * 
@@ -42,7 +44,6 @@ class Collection extends Database {
      * @param String $collection
      */
     public function __construct($collection = "") {
-                
         $this->collectionName = $collection !== "" ? $collection : $this->getCollectionName();
         $this->collection = $this->setCollection($this->collectionName);
     }
@@ -56,7 +57,7 @@ class Collection extends Database {
      * @return \FNVi\API\Query
      */
     protected function query($query = []){
-        return new Query($this->collectionName, $query);
+        return new Query($this->collectionName, $query += $this->query);
     }
     
     /**
@@ -78,7 +79,7 @@ class Collection extends Database {
      * @return integer
      */
     public function count($query, $options = []){
-        return $this->collection->count($query, $options);
+        return $this->collection->count($query += $this->query, $options);
     }
     
     /**
@@ -92,7 +93,7 @@ class Collection extends Database {
      * @return MongoDB\DeleteResult
      */
     protected function deleteMany($query, $options = []){
-        return $this->collection->deleteMany($query, $options);
+        return $this->collection->deleteMany($query += $this->query, $options);
     }
     
     /**
@@ -103,7 +104,7 @@ class Collection extends Database {
      * @return MongoDB\DeleteResult
      */
     protected function deleteOne($query, $options) {
-        return $this->collection->deleteOne($query, $options);
+        return $this->collection->deleteOne($query += $this->query, $options);
     }
     
     /**
@@ -115,7 +116,7 @@ class Collection extends Database {
      * @return array
      */
     public function distinct($fieldName, $query = [], $options = []){
-        return $this->collection->distinct($fieldName, $query, $options);
+        return $this->collection->distinct($fieldName, $query += $this->query, $options);
     }
     
     /**
@@ -126,7 +127,7 @@ class Collection extends Database {
      * @return MongoDB\Driver\Cursor
      */
     public function find($query = [], $options = []){
-        return $this->collection->find($query, $options);
+        return $this->collection->find($query += $this->query, $options);
     }
     
     /**
@@ -137,7 +138,7 @@ class Collection extends Database {
      * @return object
      */
     public function findOne($query, $options = []){
-        return $this->collection->findOne($query, $options);
+        return $this->collection->findOne($query += $this->query, $options);
     }
     
     /**
@@ -148,7 +149,7 @@ class Collection extends Database {
      * @return MongoDB\DeleteResult
      */
     public function findOneAndDelete($query, $options=[]){
-        return $this->collection->findOneAndDelete($query, $options);
+        return $this->collection->findOneAndDelete($query += $this->query, $options);
     }
     
     /**
@@ -160,7 +161,7 @@ class Collection extends Database {
      * @return object
      */
     public function findOneAndReplace($query, $replacement, $options = [] ){
-        return $this->collection->findOneAndReplace($query, $replacement, $options);
+        return $this->collection->findOneAndReplace($query += $this->query, $replacement, $options);
     }
     
     /**
@@ -172,7 +173,7 @@ class Collection extends Database {
      * @return object
      */
     public function findOneAndUpdate($query, $update, $options = []){
-        return $this->collection->findOneAndUpdate($query, $update, $options);
+        return $this->collection->findOneAndUpdate($query += $this->query, $update, $options);
     }
     
     /**
@@ -219,7 +220,7 @@ class Collection extends Database {
      * @return Update
      */
     public function update($query = []){
-        return new Update($this->collection, $query);
+        return new Update($this->collection, $query += $this->query);
     }
     
     /**
@@ -228,7 +229,7 @@ class Collection extends Database {
      * @return MongoDB\UpdateResult
      */
     public function updateMany($query, $update, $options = []){
-        return $this->collection->updateMany($query, $update, $options);
+        return $this->collection->updateMany($query += $this->query, $update, $options);
     }
     
     /**
@@ -237,7 +238,7 @@ class Collection extends Database {
      * @return MongoDB\UpdateResult
      */
     public function updateOne($query, $update, $options = []){
-        return $this->collection->updateOne($query, $update, $options);
+        return $this->collection->updateOne($query += $this->query, $update, $options);
     }
     
     /**
@@ -249,4 +250,19 @@ class Collection extends Database {
         return substr($string, -1) === "s" ? $string : $string."s";
     }
     
+    public function recoverMany($query){
+        return $this->update($query)->recover()->updateMany();
+    }
+    
+    public function recoverOne($query){
+        return $this->update($query)->recover()->updateMany();
+    }
+    
+    public function removeOne($query){
+        return $this->update($query)->remove()->updateOne();
+    }
+    
+    public function removeMany($query){
+        return $this->update($query)->remove()->updateMany();
+    }
 }

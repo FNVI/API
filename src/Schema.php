@@ -22,9 +22,9 @@ abstract class Schema extends Document {
      * @var FNVi\API\Collection 
      */
     private $collection;
-    private static $coll = null;
     
-    
+    protected $active = true;
+
     public function __construct($collection = "") {
         
         $name = $collection !== "" ? $collection : $this->className();
@@ -60,4 +60,13 @@ abstract class Schema extends Document {
         }
         return self::$coll;
     }
+    
+    public function delete() {
+        return $this->collection->removeOne(["_id"=>$this->_id]);
+    }
+    
+    public function recover(){
+        return $this->collection->recoverOne(["_id"=>$this->_id]);
+    }
+    
 }
