@@ -49,11 +49,15 @@ class Collection extends Database {
     }
     
     public function includeDeleted(){
-        $this->query = [];
+        $output = clone $this;
+        unset($output->query["active"]);
+        return $output;
     }
     
     public function onlyDeleted(){
+        $output = clone $this;
         $this->query += ["active"=>false];
+        return $output;
     }
     
     /**

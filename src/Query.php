@@ -4,13 +4,13 @@ namespace FNVi\API;
 
 use \Iterator;
 /**
- * Description of Query
+ * The Query class is created to provide backwards compatibility with the old Mongo driver in the FNVi application.
+ * It will be potentially phased out in time. Only use if absolutely necessary!
  *
  * @author Joe Wheatley <joew@fnvi.co.uk>
  */
 class Query extends Collection implements Iterator{
     
-    private $query = [];
     /**
      *
      * @var \MongoDB\Driver\Cursor 

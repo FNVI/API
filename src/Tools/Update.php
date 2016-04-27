@@ -71,7 +71,7 @@ class Update {
         return $this->addOperator('$setOnInsert',$values);
     }
     
-    public function remove($fields){
+    public function clear($fields){
         return $this->addOperator('$unset',array_combine($fields,array_fill(0, count($fields),"")));
     }
     
@@ -89,5 +89,15 @@ class Update {
     
     public function updateMany($options = []){
         return $this->collection->updateMany($this->query, $this->update, $options);
+    }
+    
+    public function remove(){
+        $this->query += ["active"=>true];
+        return $this->set(["active"=>false]);
+    }
+    
+    public function recover(){
+        $this->query += ["active"=>false];
+        return $this->set(["active"=>true]);
     }
 }
