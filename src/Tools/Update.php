@@ -29,10 +29,9 @@ class Update {
      * @param \MongoDB\Collection $collection
      * @param type $query
      */
-    public function __construct($collection, $query = [], $single = false) {
+    public function __construct($collection, $query = []) {
         $this->query = $query;
         $this->collection = $collection;
-        $this->single = $single;
     }
     
     private function addOperator($operator, $value){
@@ -83,15 +82,12 @@ class Update {
     public function currentDate($field, $type=true){
         return $this->addOperator('$currentDate',[$field=>$type]);
     }
-
-    public function execute($options = []) {
-        if($this->single)
-        {
-            return $this->collection->updateOne($this->query, $this->update, $options);
-        }
-        else
-        {
-            return $this->collection->updateMany($this->query, $this->update, $options);
-        }
+    
+    public function updateOne($options = []){
+        return $this->collection->updateOne($this->query, $this->update, $options);
+    }
+    
+    public function updateMany($options = []){
+        return $this->collection->updateMany($this->query, $this->update, $options);
     }
 }

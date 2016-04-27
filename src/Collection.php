@@ -206,23 +206,38 @@ class Collection extends Database {
     protected function listIndexes($options = []){
         return $this->collection->listIndexes($options);
     }
-
+    
+    /**
+     * Creates an update object.
+     * 
+     * The update object allows method chaining. This allows for a straightforward
+     * way of building the update operators, which coincidentally allows some 
+     * methods to be reused. Ideally it should be kept in mind that the updateOne
+     * and updateMany need to be called at the end of one of these chains.
+     * 
+     * @param array $query
+     * @return Update
+     */
+    public function update($query = []){
+        return new Update($this->collection, $query);
+    }
+    
     /**
      * Wrapper for the updateMany function
      * @param type $query
-     * @return Update
+     * @return MongoDB\UpdateResult
      */
-    public function updateMany($query = []){
-        return new Update($this->collection, $query);
+    public function updateMany($query, $update, $options = []){
+        return $this->collection->updateMany($query, $update, $options);
     }
     
     /**
      * 
      * @param type $query
-     * @return Update
+     * @return MongoDB\UpdateResult
      */
-    public function updateOne($query = []){
-        return new Update($this->collection, $query, true);
+    public function updateOne($query, $update, $options = []){
+        return $this->collection->updateOne($query, $update, $options);
     }
     
     /**
