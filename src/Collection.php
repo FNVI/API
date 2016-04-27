@@ -48,15 +48,34 @@ class Collection extends Database {
         $this->collection = $this->setCollection($this->collectionName);
     }
     
+    /**
+     * Returns a clone of the collection that allows inactive documents are returned
+     * @return \FNVi\API\Collection
+     */
     public function includeDeleted(){
         $output = clone $this;
         unset($output->query["active"]);
         return $output;
     }
     
+    /**
+     * Returns a clone of the collection where only inactive documents are returned
+     * @return \FNVi\API\Collection
+     */
     public function onlyDeleted(){
         $output = clone $this;
-        $this->query += ["active"=>false];
+        $output->query["active"] = false;
+        return $output;
+    }
+    
+    /**
+     * Returns a clone of the collection where only active documents are returned
+     * (only implemented as a precaution, as this is the default functionality)
+     * @return \FNVi\API\Collection
+     */
+    public function onlyActive(){
+        $output = clone $this;
+        $output->query["active"] = true;
         return $output;
     }
     
@@ -276,5 +295,9 @@ class Collection extends Database {
     
     public function removeMany($query){
         return $this->update($query)->remove()->updateMany();
+    }
+    
+    public function flush(){
+        $this->onlyDeleted()->deleteMany([]);
     }
 }
