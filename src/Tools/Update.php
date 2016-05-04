@@ -6,7 +6,7 @@
  * and open the template in the editor.
  */
 
-namespace FNVi\mongo\Tools;
+namespace FNVi\Mongo\Tools;
 
 /**
  * Description of Update

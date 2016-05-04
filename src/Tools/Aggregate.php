@@ -1,6 +1,6 @@
 <?php
 
-namespace FNVi\mongo\Tools;
+namespace FNVi\Mongo\Tools;
 
 /**
  * Description of Aggregate

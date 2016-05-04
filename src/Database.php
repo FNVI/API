@@ -1,6 +1,6 @@
 <?php
 
-namespace FNVi\mongo;
+namespace FNVi\Mongo;
 
 use MongoDB\Client;
 

@@ -15,7 +15,7 @@
     },
     "autoload":{
         "psr-4":{
-            "FNVi\\mongo\\":"src"
+            "FNVi\\Mongo\\":"src"
         }
     }
 }

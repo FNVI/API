@@ -6,9 +6,9 @@
  * and open the template in the editor.
  */
 
-namespace FNVi\mongo;
+namespace FNVi\Mongo;
 
-use FNVi\mongo\Collection;
+use FNVi\Mongo\Collection;
 use MongoDB\BSON\ObjectID;
 
 /**
@@ -20,7 +20,7 @@ abstract class Schema extends Document {
     
     /**
      *
-     * @var FNVi\mongo\Collection 
+     * @var FNVi\Mongo\Collection 
      */
     private $collection;
     
@@ -35,7 +35,7 @@ abstract class Schema extends Document {
     
     /**
      * 
-     * @return \FNVi\mongo\Collection
+     * @return \FNVi\Mongo\Collection
      */
 //    public function collection(){
 //        return $this->collection->collection();
