@@ -9,6 +9,7 @@
 namespace FNVi\API;
 
 use FNVi\API\Collection;
+use MongoDB\BSON\ObjectID;
 
 /**
  * Description of Schema
@@ -67,6 +68,18 @@ abstract class Schema extends Document {
     
     public function recover(){
         return $this->collection->recoverOne(["_id"=>$this->_id]);
+    }
+    
+    public function store(){
+        return $this->collection->findOneAndReplace(["_id"=>$this->_id], $this, ["upsert"=>true]);
+    }
+    
+    protected static function loadFromID($id){
+        return $this->collection()->findOne(["_id"=>new ObjectID($id."")]);
+    }
+
+    protected function timestamp(){
+        return new UTCDateTime(time() * 1000);
     }
     
 }

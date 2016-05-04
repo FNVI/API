@@ -1,5 +1,5 @@
 {
-    "name": "fnvi/API",
+    "name": "fnvi/mongo",
     "description": "This is an underlying api to be used for the FNVi project. It will provide the base layers for working with objects from Mongo and will be extended",
     "authors": [
         {
@@ -15,7 +15,7 @@
     },
     "autoload":{
         "psr-4":{
-            "FNVi\\API\\":"src"
+            "FNVi\\mongo\\":"src"
         }
     }
 }
