@@ -42,15 +42,8 @@ abstract class Document implements Persistable{
         return array_keys(get_object_vars($this));
     }
     
-    public function toArray($fields = []){
-        $output = [];
-        foreach($this->keys() as $key){
-            if((in_array($key, $fields) || $fields === [])&& $this->{$key})
-            {
-                $output[$key] = $this->{$key};
-            }
-        }
-        return $output;
+    public function toArray($include = [], $exclude = []){
+        return array_intersect_key(get_object_vars($this), array_flip(array_diff($include, $exclude)));
     }
     
     public function __toString() {

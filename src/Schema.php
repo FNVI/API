@@ -23,7 +23,7 @@ abstract class Schema extends Document {
      *
      * @var FNVi\Mongo\Collection 
      */
-    private $collection;
+    public $collection;
     
     protected $active = true;
 
@@ -55,7 +55,7 @@ abstract class Schema extends Document {
         return substr($string, -1) === "s" ? $string : $string."s";
     }
     
-    static private function collection($name = ""){
+    static private function collection(){
         if(!self::$coll)
         {
             self::$coll = new Collection(self::getClass());
@@ -81,6 +81,15 @@ abstract class Schema extends Document {
 
     protected function timestamp(){
         return new UTCDateTime(time() * 1000);
+    }
+    
+    public function toArray($include = [], $exclude = []) {
+        parent::toArray($include, $exclude += ["collection"]);
+    }
+    
+    public function bsonUnserialize(array $data) {
+        $this->collection = new Collection($this->className());
+        parent::bsonUnserialize($data);
     }
     
 }
