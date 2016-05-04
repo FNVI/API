@@ -10,6 +10,7 @@ namespace FNVi\Mongo;
 
 use FNVi\Mongo\Collection;
 use MongoDB\BSON\ObjectID;
+use MongoDB\BSON\UTCDateTime;
 
 /**
  * Description of Schema
