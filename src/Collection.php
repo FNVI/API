@@ -6,8 +6,8 @@
  * and open the template in the editor.
  */
 
-namespace FNVi\API;
-use FNVi\API\Tools\Update;
+namespace FNVi\mongo;
+use FNVi\mongo\Tools\Update;
 
 /**
  * Represents a MongoDB collection
@@ -50,7 +50,7 @@ class Collection extends Database {
     
     /**
      * Returns a clone of the collection that allows inactive documents are returned
-     * @return \FNVi\API\Collection
+     * @return \FNVi\mongo\Collection
      */
     public function includeDeleted(){
         $output = clone $this;
@@ -60,7 +60,7 @@ class Collection extends Database {
     
     /**
      * Returns a clone of the collection where only inactive documents are returned
-     * @return \FNVi\API\Collection
+     * @return \FNVi\mongo\Collection
      */
     public function onlyDeleted(){
         $output = clone $this;
@@ -71,7 +71,7 @@ class Collection extends Database {
     /**
      * Returns a clone of the collection where only active documents are returned
      * (only implemented as a precaution, as this is the default functionality)
-     * @return \FNVi\API\Collection
+     * @return \FNVi\mongo\Collection
      */
     public function onlyActive(){
         $output = clone $this;
@@ -85,7 +85,7 @@ class Collection extends Database {
      * For further details on the query object see its entry in the documentation.
      * 
      * @param array $query
-     * @return \FNVi\API\Query
+     * @return \FNVi\mongo\Query
      */
     protected function query($query = []){
         return new Query($this->collectionName, $query += $this->query);

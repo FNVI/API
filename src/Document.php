@@ -1,6 +1,6 @@
 <?php
 
-namespace FNVi\API;
+namespace FNVi\mongo;
 
 use MongoDB\BSON\Persistable as Persistable;
 use MongoDB\BSON\ObjectID;
