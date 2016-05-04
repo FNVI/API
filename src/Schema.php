@@ -84,7 +84,7 @@ abstract class Schema extends Document {
     }
     
     public function toArray($include = [], $exclude = []) {
-        parent::toArray($include, $exclude += ["collection"]);
+        return parent::toArray($include, $exclude += ["collection"]);
     }
     
     public function bsonUnserialize(array $data) {
