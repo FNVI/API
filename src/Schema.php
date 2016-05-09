@@ -92,4 +92,8 @@ abstract class Schema extends Document {
         parent::bsonUnserialize($data);
     }
     
+    protected function keys($exclude = []) {
+        return parent::keys($exclude += ["collection"]);
+    }
+    
 }

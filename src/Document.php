@@ -38,8 +38,8 @@ abstract class Document implements Persistable{
         }
     }
     
-    private function keys(){
-        return array_keys(get_object_vars($this));
+    protected function keys($exclude = []){
+        return array_diff(array_keys(get_object_vars($this)),$exclude);
     }
     
     public function toArray($include = [], $exclude = []){
