@@ -44,12 +44,16 @@ abstract class Document implements Persistable{
     
     public function toArray($include = [], $exclude = []){
         if($include === [] && $exclude === []){
-            return array_filter(get_object_vars($this));
+            return array_filter(get_object_vars($this),[$this,"arrayFilter"]);
         } elseif($include === []){
-            return array_filter(array_diff_key(get_object_vars($this), array_flip($exclude)));
+            return array_filter(array_diff_key(get_object_vars($this), array_flip($exclude)),[$this,"arrayFilter"]);
         }  else {
-            return array_filter(array_intersect_key(get_object_vars($this), array_flip(array_diff($include, $exclude))));
+            return array_filter(array_intersect_key(get_object_vars($this), array_flip(array_diff($include, $exclude))),[$this,"arrayFilter"]);
         }
+    }
+    
+    protected function arrayFilter($var){
+        return ($var !== NULL && $var !== '');
     }
     
     public function __toString() {
