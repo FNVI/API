@@ -1,11 +1,4 @@
 <?php
-
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace FNVi\Mongo;
 
 /**
@@ -13,7 +6,14 @@ namespace FNVi\Mongo;
  *
  * @author Joe Wheatley <joew@fnvi.co.uk>
  */
-class Status{
+class Status {
     public $name;
     public $order;
+    
+    public function __construct($name, $order = null) {
+        $this->name = $name;
+        if($order){
+            $this->order = $order;
+        }
+    }
 }

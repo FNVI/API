@@ -25,10 +25,12 @@ abstract class Schema extends Document {
      */
     public $collection;
     
+    public $collectionName;
+    
     protected $active = true;
 
     public function __construct($collection = "") {
-        
+        $this->collectionName = $collection;
         $name = $collection !== "" ? $collection : $this->className();
         $this->collection = new Collection($name);
         parent::__construct();
@@ -84,16 +86,16 @@ abstract class Schema extends Document {
     }
     
     public function toArray($include = [], $exclude = []) {
-        return parent::toArray($include, $exclude += ["collection"]);
+        return parent::toArray($include, $exclude += ["collection", "collectionName"]);
     }
     
     public function bsonUnserialize(array $data) {
-        $this->collection = new Collection($this->className());
+        $this->collection = new Collection($this->collectionName ? $this->collectionName : $this->className());
         parent::bsonUnserialize($data);
     }
     
     protected function keys($exclude = []) {
-        return parent::keys($exclude += ["collection"]);
+        return parent::keys($exclude += ["collection", "collectionName"]);
     }
     
 }
