@@ -33,8 +33,12 @@ class Aggregate {
         return $this->add('$match', $query);
     }
     
-    public function group($fields){
-        return $this->add('$group', $fields);
+    public function group($_id, $fields){
+        $temp = [];
+        foreach($fields as $field){
+            $temp += [$field=>'$'.$field];
+        }
+        return $this->add('$group', ["_id"=>$_id, "data"=>['$addToSet'=>$temp]]);
     }
 
     public function sort($fields){
