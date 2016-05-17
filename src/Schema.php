@@ -98,4 +98,7 @@ abstract class Schema extends Document {
         return parent::keys($exclude += ["collection", "collectionName"]);
     }
     
+    public static function getProperties(){
+        return array_keys(get_class_vars(get_called_class()));
+    }
 }

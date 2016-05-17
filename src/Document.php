@@ -11,7 +11,7 @@ use MongoDB\BSON\ObjectID;
  */
 abstract class Document extends BSON{
     
-    protected $_id;
+    public $_id;
     
     public function __construct() {
         $this->_id = new ObjectID();
