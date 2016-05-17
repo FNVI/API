@@ -37,11 +37,11 @@ class Aggregate {
         if($keepClass){
             $fields[] = "__pclass";
         }
-        return $this->add('$group', ["_id"=>$_id, "documents"=>['$push'=> self::map($fields)]]);
+        return $this->add('$group', ["_id"=>$_id, "count"=>['$sum'=>1], "documents"=>['$push'=> self::map($fields)]]);
     }
     
     public function groupBy($_id){
-        return $this->add('$group', ["_id"=>$_id, "documents"=>['$push'=>'$$ROOT']]);
+        return $this->add('$group', ["_id"=>$_id, "count"=>['$sum'=>1], "documents"=>['$push'=>'$$ROOT']]);
     }
 
     public function sort($fields){
