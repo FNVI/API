@@ -33,12 +33,15 @@ class Aggregate {
         return $this->add('$match', $query);
     }
     
-    public function group($_id, $fields){
-        $temp = [];
-        foreach($fields as $field){
-            $temp += [$field=>'$'.$field];
+    public function group($_id, $fields, $keepClass = true){
+        if($keepClass){
+            $fields[] = "__pclass";
         }
-        return $this->add('$group', ["_id"=>$_id, "data"=>['$addToSet'=>$temp]]);
+        return $this->add('$group', ["_id"=>$_id, "documents"=>['$push'=> self::map($fields)]]);
+    }
+    
+    public function groupBy($_id){
+        return $this->add('$group', ["_id"=>$_id, "documents"=>['$push'=>'$$ROOT']]);
     }
 
     public function sort($fields){
@@ -63,5 +66,13 @@ class Aggregate {
     
     public function getPipeline(){
         return $this->pipeline;
+    }
+    
+    public static function map($fields){
+        $out = [];
+        foreach($fields as $field){
+            $out += [$field=>'$'.array_pop(explode(".", $field))];
+        }
+        return $out;
     }
 }
