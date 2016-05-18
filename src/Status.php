@@ -6,7 +6,7 @@ namespace FNVi\Mongo;
  *
  * @author Joe Wheatley <joew@fnvi.co.uk>
  */
-class Status {
+class Status extends SubDocument{
     public $name;
     public $order;
     
@@ -15,5 +15,9 @@ class Status {
         if($order){
             $this->order = $order;
         }
+    }
+    
+    public function __toString() {
+        return $this->name;
     }
 }
