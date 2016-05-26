@@ -41,7 +41,9 @@ class Aggregate {
     }
     
     public function groupBy($_id){
-        return $this->add('$group', ["_id"=>$_id, "count"=>['$sum'=>1], "documents"=>['$push'=>'$$ROOT']]);
+        $field = str_replace('$','',array_pop(explode(".", $_id)));
+        return $this->add('$group', ["_id"=>$_id, "count"=>['$sum'=>1], "documents"=>['$push'=>'$$ROOT']])
+                ->project(['_id'=>0,$field=>'$_id',"count"=>'$count',"documents"=>'$documents']);
     }
 
     public function sort($fields){
