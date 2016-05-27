@@ -87,7 +87,7 @@ class Collection extends Database {
      * @param array $query
      * @return \FNVi\Mongo\Query
      */
-    protected function query($query = []){
+    protected function query(array $query = []){
         return new Query($this->collectionName, $query += $this->query);
     }
     
@@ -98,7 +98,7 @@ class Collection extends Database {
      * @param array $options
      * @return Traversible
      */
-    public function aggregate($pipeline, $options = []){
+    public function aggregate(array $pipeline ,array $options = []){
         return $this->collection->aggregate($pipeline, $options);
     }
     
