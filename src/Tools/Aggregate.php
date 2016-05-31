@@ -7,7 +7,7 @@ namespace FNVi\Mongo\Tools;
  *
  * @author Joe Wheatley <joew@fnvi.co.uk>
  */
-class Aggregate {
+class Aggregate implements AggregateInterface{
     
     private $pipeline = [];
     /**
