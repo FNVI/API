@@ -8,6 +8,7 @@
 
 namespace FNVi\Mongo;
 use FNVi\Mongo\Tools\Update;
+use FNVi\Mongo\Tools\Aggregate;
 
 /**
  * Represents a MongoDB collection
@@ -94,12 +95,12 @@ class Collection extends Database {
     /**
      * Wrapper for the aggregate function
      * 
-     * @param array $pipeline
+     * @param Aggregate $pipeline
      * @param array $options
      * @return Traversible
      */
-    public function aggregate(array $pipeline ,array $options = []){
-        return $this->collection->aggregate($pipeline, $options);
+    public function aggregate(Aggregate $pipeline ,array $options = []){
+        return $this->collection->aggregate($pipeline->getPipeline(), $options);
     }
     
     /**
