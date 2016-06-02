@@ -40,10 +40,20 @@ class Aggregate implements AggregateInterface{
         return $this->add('$group', ["_id"=>$_id, "count"=>['$sum'=>1], "documents"=>['$push'=> self::map($fields)]]);
     }
     
-    public function groupBy($_id){
+    public function groupBy($_id, $sumFields = []){
         $field = str_replace('$','',array_pop(explode(".", $_id)));
-        return $this->add('$group', ["_id"=>$_id, "count"=>['$sum'=>1], "documents"=>['$push'=>'$$ROOT']])
-                ->project(['_id'=>0,$field=>'$_id',"count"=>'$count',"documents"=>'$documents']);
+        $sum = $this->sumFields($sumFields);
+        $test = Aggregate::map($sumFields);
+        return $this->add('$group', $sum += ["_id"=>$_id, "count"=>['$sum'=>1], "documents"=>['$push'=>'$$ROOT']])
+                ->project($test += ['_id'=>0,$field=>'$_id',"count"=>'$count',"documents"=>'$documents']);
+    }
+    
+    private function sumFields(array $fields = []){
+        $output = [];
+        foreach($fields as $field){
+            $output[array_pop(explode(".",$field))] = ['$sum'=>'$'.$field];
+        }
+        return $output;
     }
 
     public function sort($fields){
