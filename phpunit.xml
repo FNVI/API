@@ -6,4 +6,9 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          stopOnFailure="true">
+    <testsuites>
+        <testsuite name="fnvi/mongo tests">
+            <directory suffix=".php">./tests/</directory>
+        </testsuite>
+    </testsuites>
 </phpunit>
