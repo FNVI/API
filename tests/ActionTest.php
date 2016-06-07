@@ -9,7 +9,7 @@ use FNVi\Mongo\Action;
  */
 class ActionTest extends TestCase{
     
-    public function createsTimestamp(){
+    public function testConstructor(){
         $object = new Action;
         $this->assertObjectHasAttribute("timestamp", $object);
     }
