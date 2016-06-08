@@ -11,7 +11,9 @@ class ActionTest extends TestCase{
     
     public function testConstructor(){
         $object = new Action;
-        $this->assertObjectHasAttribute("timestamp", $object);
+        $date = new DateTime();
+        $this->assertObjectHasAttribute("timestamp", $object, "has timestamp");
+        $this->assertEquals($object->timestamp->toDateTime()->getTimestamp(), $date->getTimestamp(), 'check auto timestamp', 2);
     }
     
 }
