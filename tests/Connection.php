@@ -2,7 +2,8 @@
 use phpunit\framework\TestCase;
 use FNVi\Mongo\Collection;
 
-define("DATABASE","mongodb://localhost");
+define("MONGOURI","mongodb://localhost");
+define("DATABASE","testdb");
 
 /**
  * Description of Connection
