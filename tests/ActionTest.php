@@ -14,6 +14,7 @@ class ActionTest extends TestCase{
         $date = new DateTime();
         $this->assertObjectHasAttribute("timestamp", $object, "has timestamp");
         $this->assertEquals($object->timestamp->toDateTime()->getTimestamp(), $date->getTimestamp(), 'check auto timestamp', 2);
+        
     }
     
 }
