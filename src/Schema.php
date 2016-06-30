@@ -45,7 +45,8 @@ abstract class Schema extends Document {
 //    }
     
     public function className(){
-        return array_pop(explode('\\',  strtolower(get_class($this))))."s";
+        $array = explode('\\',  strtolower(get_class($this)));
+        return array_pop($array)."s";
     }
     
     public static function find($query){
