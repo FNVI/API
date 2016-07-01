@@ -22,7 +22,7 @@ abstract class BSON implements Persistable{
     }
     
     protected function keys($exclude = []){
-        return array_diff(array_keys(get_object_vars($this)),$exclude);
+        return array_values(array_diff(array_keys(get_object_vars($this)),$exclude));
     }
     
     public function toArray($include = [], $exclude = []){
