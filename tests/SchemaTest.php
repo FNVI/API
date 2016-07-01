@@ -65,9 +65,12 @@ class SchemaTest extends TestCase{
      */
     public function testKeys(Schema $document){
         $expected = ["_id","active","field1","field2"];
-        $actual = $document->keys();
+        $exclude = [];
+        foreach($expected as $e){
+            $this->assertEquals($expected, $document->keys($exclude), '', 0.0, 10, true);
+            $exclude[] = array_pop($expected);
+        }
         
-        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
     }
     
 }
