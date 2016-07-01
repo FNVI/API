@@ -17,7 +17,7 @@ use MongoDB\BSON\UTCDateTime;
  *
  * @author Joe Wheatley <joew@fnvi.co.uk>
  */
-abstract class Schema extends Document {
+class Schema extends Document {
     
     /**
      *
@@ -87,7 +87,7 @@ abstract class Schema extends Document {
     }
     
     public function toArray($include = [], $exclude = []) {
-        return parent::toArray($include, $exclude += ["collection", "collectionName"]);
+        return parent::toArray($include, array_merge($exclude,["collection", "collectionName"]));
     }
     
     public function bsonUnserialize(array $data) {
@@ -95,8 +95,8 @@ abstract class Schema extends Document {
         parent::bsonUnserialize($data);
     }
     
-    protected function keys($exclude = []) {
-        return parent::keys($exclude += ["collection", "collectionName"]);
+    public function keys($exclude = []) {
+        return parent::keys(array_merge($exclude, ["collection", "collectionName"]));
     }
     
     public static function getProperties(){
