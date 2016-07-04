@@ -73,4 +73,11 @@ class SchemaTest extends TestCase{
         
     }
     
+    public function testGetProperties(){
+        $expected = ["_id","collection", "collectionName","active"];
+        $actual = Schema::getProperties();
+        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+        
+    }
+    
 }

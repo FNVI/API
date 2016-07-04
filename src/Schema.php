@@ -1,11 +1,5 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace FNVi\Mongo;
 
 use FNVi\Mongo\Collection;
@@ -49,6 +43,7 @@ class Schema extends Document {
         return array_pop($array)."s";
     }
     
+    //does this get used?
     public static function find($query){
         return self::collection()->find($query);
     }
@@ -59,6 +54,7 @@ class Schema extends Document {
         return substr($string, -1) === "s" ? $string : $string."s";
     }
     
+    //should this be used or should there be a static property
     static private function collection(){
         if(!self::$coll)
         {
