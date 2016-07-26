@@ -17,7 +17,9 @@ abstract class BSON implements Persistable{
     public function bsonUnserialize(array $data)
     {
         foreach($this->keys() as $key){
-            $this->{$key} = $data[$key];
+            if(isset($data[$key])){
+                $this->{$key} = $data[$key];
+            }
         }
     }
     
