@@ -278,7 +278,8 @@ class Collection extends Database {
      * @return type
      */
     public function getCollectionName(){
-        $string = array_pop(explode('\\',  strtolower(get_called_class())));
+        $array = explode('\\',  strtolower(get_called_class()));
+        $string = array_pop($array);
         return substr($string, -1) === "s" ? $string : $string."s";
     }
     
