@@ -50,5 +50,7 @@ abstract class Database {
         return self::db()->selectCollection(DATABASE,$name);
     }
     
-
+    public static function dropDatabase(){
+        self::$db->dropDatabase(constant("DATABASE"));
+    }
 }
