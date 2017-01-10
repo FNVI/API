@@ -20,8 +20,10 @@ abstract class Database {
      * This is the client object
      * @var MongoDB\Client
      */
-    private static $db = null;
-        
+    private static $client;
+    
+    private static $database = "";
+
     /**
      * Sets handle to database
      * 
@@ -30,14 +32,26 @@ abstract class Database {
      * 
      * @return MongoDB\Client
      */
-    private static function db()
-    {
-        if(self::$db === null)
+    public static function connect($uri){
+        if(self::$client === null)
         {
-            $db = DATABASE;
-            self::$db = new Client(MONGOURI);
+            self::$database = ltrim(parse_url($uri, PHP_URL_PATH),'/');
+            self::$client = new Client($uri);
         }
-        return self::$db;
+        return self::$client;
+    }
+    
+    /**
+     * A helper function for creating MongoURI strings
+     * @param array $servers    Array of servers
+     * @param string $database  The database to connect to
+     * @param string $username  The username to connect with
+     * @param string $password  The password to connect with
+     * @param array $options    MongoURI options in a key value format
+     * @return string   A MongoURI
+     */
+    public static function createMongoURI(array $servers, $database = null, $username = null, $password = null, array $options = []){
+        return "mongodb://". ($username && $password ? "$username:$password@" : ""). implode(",", $servers) . ($database ? "/$database" : "") . (count($options) ? "?".http_build_query($options) : "");
     }
     
     /**
@@ -46,11 +60,11 @@ abstract class Database {
      * @param string $name
      * @return MongoDB\Collection
      */
-    protected function setCollection($name) {
-        return self::db()->selectCollection(DATABASE,$name);
+    protected function selectCollection($name) {
+        return self::$client->selectCollection(self::$database,$name);
     }
     
     public static function dropDatabase(){
-        self::$db->dropDatabase(constant("DATABASE"));
+        self::$client->dropDatabase(self::$database);
     }
 }
