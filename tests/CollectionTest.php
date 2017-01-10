@@ -66,7 +66,7 @@ class CollectionTest extends TestCase{
         $document->offsetSet("test", "update one");
         
         $updateResult = $this->collection->updateOne($query, ['$set'=>$update]);
-        $count = $updateResult->getDeletedCount();
+        $count = $updateResult->getModifiedCount();
         $matched = $updateResult->getMatchedCount();
         $this->assertEquals(1, $count, "update one result ".  json_encode(["count"=>$count, "matched"=>$matched],128));
         
@@ -105,7 +105,7 @@ class CollectionTest extends TestCase{
         $update = ["test"=>"update many"];
         
         $updateResult = $this->collection->updateMany([], ['$set'=>$update]);
-        $count = $updateResult->getDeletedCount();
+        $count = $updateResult->getModifiedCount();
         $matched = $updateResult->getMatchedCount();
         $this->assertEquals(5, $count, "update many result ".  json_encode(["count"=>$count, "matched"=>$matched],128));
         
