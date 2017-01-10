@@ -1,5 +1,7 @@
 <?php
 use PHPUnit\Framework\TestCase;
+use FNVi\Mongo\Database;
+use FNVi\Mongo\Collection;
 use FNVi\Mongo\Schema;
 /**
  * Description of SchemaTest
@@ -8,76 +10,70 @@ use FNVi\Mongo\Schema;
  */
 class SchemaTest extends TestCase{
     
-    public function testConstructor(){
-        $document = new Schema("testSchema");
-        $this->assertEquals("testSchema", $document->collectionName);
-        return $document;
+    /**
+     * An FNVi Schema class
+     * @var Schema
+     */
+    protected $schema;
+
+    public static function setUpBeforeClass() {
+        Database::connect("mongodb://localhost/testdb");
     }
     
-    /**
-     * @depends testConstructor
-     * @param Schema $document
-     * @return Schema A Schema document
-     */
-    public function testClassName(Schema $document){
-        $this->assertEquals("schemas", $document->className());
-        return $document;
+    public static function tearDownAfterClass() {
+        Database::dropDatabase();
+    }
+    
+    protected function setUp() {
+        $this->schema = $this->getMockBuilder(Schema::class)->setMockClassName("Test")->getMockForAbstractClass();
+    }
+    
+    public function testClassName(){
+        $this->assertEquals("tests", $this->schema->className());
     }
     
     public function testGetClass(){
-        $expected = "schemas";
-        $actual = Schema::getClass();
-        $this->assertEquals($expected, $actual);
+        $this->assertEquals("schemas", Schema::getClass(), "get class static");
     }
     
-    /**
-     * To be implemented later
-     * 
-     * @depends testClassName
-     * @param Schema $document
-     */
-//    public function testStore(Schema $document){
+    public function testCollection(){
+        $actual = $this->schema->collection->collectionName();
+        $excpected = "tests";
+        $this->assertEquals($excpected, $actual);
+        $this->assertEquals(Collection::class, get_class($this->schema->collection));
+    }
+    
+//   
+//    public function testToArray(){
+//        $expected = ["_id"=>$this->schema->getId()];
+//        $this->assertEquals($expected, $this->schema->toArray());
+//        
+//        $expected += ["field1"=>"field1"];
+//        $this->schema->field1 = "field1";
+//        $this->schema->field2 = "field2";
+//        
+//        $this->assertEquals($expected, $this->schema->toArray([], ["field2"]));
+//        $expected += ["field2"=>"field2"];
+//        
+//        $this->assertEquals($expected, $this->schema->toArray());
+//        $this->assertEquals(["active"=>true], $this->schema->toArray(["active"]));
 //    }
-    
-    /**
-     * @depends testConstructor
-     * @param Schema $document
-     */
-    public function testToArray(Schema $document){
-        $expected = ["active"=>true,"_id"=>$document->getId()];
-        $this->assertEquals($expected, $document->toArray());
-        
-        $expected += ["field1"=>"field1"];
-        $document->field1 = "field1";
-        $document->field2 = "field2";
-        
-        $this->assertEquals($expected, $document->toArray([], ["field2"]));
-        $expected += ["field2"=>"field2"];
-        
-        $this->assertEquals($expected, $document->toArray());
-        $this->assertEquals(["active"=>true], $document->toArray(["active"]));
-        return $document;
-    }
-    
-    /**
-     * @depends testToArray
-     * @param Schema $document
-     */
-    public function testKeys(Schema $document){
-        $expected = ["_id","active","field1","field2"];
-        $exclude = [];
-        foreach($expected as $e){
-            $this->assertEquals($expected, $document->keys($exclude), '', 0.0, 10, true);
-            $exclude[] = array_pop($expected);
-        }
-        
-    }
-    
-    public function testGetProperties(){
-        $expected = ["_id","collection", "collectionName","active"];
-        $actual = Schema::getProperties();
-        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
-        
-    }
+//    
+//    public function testKeys(){
+//        $expected = ["_id","active","field1","field2"];
+//        $exclude = [];
+//        foreach($expected as $e){
+//            $this->assertEquals($expected, $this->schema->keys($exclude), '', 0.0, 10, true);
+//            $exclude[] = array_pop($expected);
+//        }
+//        
+//    }
+//    
+//    public function testGetProperties(){
+//        $expected = ["_id","collection", "collectionName","active"];
+//        $actual = Schema::getProperties();
+//        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
+//        
+//    }
     
 }
