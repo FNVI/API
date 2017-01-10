@@ -21,27 +21,27 @@ class SchemaTest extends TestCase{
     }
     
     public static function tearDownAfterClass() {
-//        Database::dropDatabase();
+        Database::dropDatabase();
     }
     
     protected function setUp() {
         $this->schema = $this->getMockBuilder(Schema::class)->setMockClassName("Test")->getMockForAbstractClass();
     }
     
-//    public function testClassName(){
-//        $this->assertEquals("tests", $this->schema->className());
-//    }
+    public function testClassName(){
+        $this->assertEquals("tests", $this->schema->className());
+    }
     
     public function testGetClass(){
         $this->assertEquals("schemas", Schema::getClass(), "get class static");
     }
     
-//    public function testCollection(){
-//        $actual = $this->schema->collection->collectionName();
-//        $excpected = "tests";
-//        $this->assertEquals($excpected, $actual);
-//        $this->assertEquals(Collection::class, get_class($this->schema->collection));
-//    }
+    public function testCollection(){
+        $actual = $this->schema->collection->collectionName();
+        $excpected = "tests";
+        $this->assertEquals($excpected, $actual);
+        $this->assertEquals(Collection::class, get_class($this->schema->collection));
+    }
     
 //   
 //    public function testToArray(){

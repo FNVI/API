@@ -12,7 +12,7 @@ use FNVi\Mongo\Database;
 class DatabaseTest extends TestCase{
     
     public static function tearDownAfterClass() {
-//        Database::dropDatabase();
+        Database::dropDatabase();
     }
 
     public function testConnection(){

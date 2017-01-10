@@ -22,7 +22,7 @@ class AggregateTest extends TestCase{
     }
     
     public static function tearDownAfterClass() {
-//        Database::dropDatabase();
+        Database::dropDatabase();
     }
     
     protected function setUp(){
