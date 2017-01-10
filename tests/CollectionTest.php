@@ -18,7 +18,7 @@ class CollectionTest extends TestCase{
     protected $collection;
     
     public static function setUpBeforeClass() {
-        Database::connect("mongodb://localhost/testdb");
+        Database::connect("mongodb://testuser:testpassword@ds159188.mlab.com:59188/mongobasetest");
     }
     
     public static function tearDownAfterClass() {
@@ -66,16 +66,16 @@ class CollectionTest extends TestCase{
         $document->offsetSet("test", "update one");
         
         $updateResult = $this->collection->updateOne($query, ['$set'=>$update]);
-        $this->assertEquals(1, $updateResult->getModifiedCount(), "update one");
+        $count = $updateResult->getDeletedCount();
+        $matched = $updateResult->getMatchedCount();
+        $this->assertEquals(1, $count, "update one result ".  json_encode(["count"=>$count, "matched"=>$matched],128));
         
         $findUpdatedResult = $this->collection->findOne($query);
         $this->assertEquals($document, $findUpdatedResult, "find updated one");
         
         
         $deleteResult = $this->collection->deleteOne($query);
-        $count = $deleteResult->getDeletedCount();
-        $matched = $deleteResult->isAcknowledged();
-        $this->assertEquals(1, $count, "remove one result ".  json_encode(["count"=>$count, "acknowledged"=>$matched],128));
+        $this->assertEquals(1, $deleteResult->getDeletedCount(), "remove one");
         
         $findRemovedResult = $this->collection->findOne($query);
         $this->assertNull($findRemovedResult, "find removed one");
@@ -105,7 +105,9 @@ class CollectionTest extends TestCase{
         $update = ["test"=>"update many"];
         
         $updateResult = $this->collection->updateMany([], ['$set'=>$update]);
-        $this->assertEquals(5, $updateResult->getModifiedCount(), "update many");
+        $count = $updateResult->getDeletedCount();
+        $matched = $updateResult->getMatchedCount();
+        $this->assertEquals(5, $count, "update many result ".  json_encode(["count"=>$count, "matched"=>$matched],128));
         
         foreach ($documents as $d)
         {
@@ -116,9 +118,7 @@ class CollectionTest extends TestCase{
         
         
         $deleteResult = $this->collection->deleteMany();
-        $count = $deleteResult->getDeletedCount();
-        $matched = $deleteResult->isAcknowledged();
-        $this->assertEquals(5, $deleteResult->getDeletedCount(), "remove many result ".  json_encode(["count"=>$count, "acknowledged"=>$matched],128));
+        $this->assertEquals(5, $deleteResult->getDeletedCount(), "remove many");
         
         $findRemovedResult = $this->collection->findOne();
         $this->assertNull($findRemovedResult, "find removed one");
