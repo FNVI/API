@@ -22,7 +22,7 @@ class AggregateTest extends TestCase{
     }
     
     public static function tearDownAfterClass() {
-        Database::dropDatabase();
+//        Database::dropDatabase();
     }
     
     protected function setUp(){
@@ -73,6 +73,9 @@ class AggregateTest extends TestCase{
         $this->assertEquals($expected, $actual, json_encode($actual,128));
     }
     
+    /**
+     * 
+     */
     public function testPercentage(){
         $actual = $this->aggregatePipeline->percentage("value", "total");
         $expected = [
