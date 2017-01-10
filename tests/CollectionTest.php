@@ -73,7 +73,9 @@ class CollectionTest extends TestCase{
         
         
         $deleteResult = $this->collection->deleteOne($query);
-        $this->assertEquals(1, $deleteResult->getDeletedCount(), "remove one");
+        $count = $deleteResult->getDeletedCount();
+        $matched = $deleteResult->isAcknowledged();
+        $this->assertEquals(1, $count, "remove one result ".  json_encode(["count"=>$count, "acknowledged"=>$matched],128));
         
         $findRemovedResult = $this->collection->findOne($query);
         $this->assertNull($findRemovedResult, "find removed one");
@@ -114,7 +116,9 @@ class CollectionTest extends TestCase{
         
         
         $deleteResult = $this->collection->deleteMany();
-        $this->assertEquals(5, $deleteResult->getDeletedCount(), "remove many");
+        $count = $deleteResult->getDeletedCount();
+        $matched = $deleteResult->isAcknowledged();
+        $this->assertEquals(5, $deleteResult->getDeletedCount(), "remove many result ".  json_encode(["count"=>$count, "acknowledged"=>$matched],128));
         
         $findRemovedResult = $this->collection->findOne();
         $this->assertNull($findRemovedResult, "find removed one");
