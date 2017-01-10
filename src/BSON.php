@@ -9,11 +9,19 @@ use MongoDB\BSON\Persistable as Persistable;
  */
 abstract class BSON implements Persistable{
 
+    /**
+     * Serializes the object to an array
+     * @return array
+     */
     public function bsonSerialize()
     {
         return $this->toArray();
     }
     
+    /**
+     * Unserializes the data from an array to an object
+     * @param array $data
+     */
     public function bsonUnserialize(array $data)
     {
         foreach($this->keys() as $key){
@@ -23,11 +31,22 @@ abstract class BSON implements Persistable{
         }
     }
     
-    protected function keys($exclude = []){
+    /**
+     * Gets the keys/properties of the current object
+     * @param array $exclude Names of keys to exclude from the result
+     * @return array A list of keys/properties of the object
+     */
+    protected function keys(array $exclude = []){
         return array_values(array_diff(array_keys(get_object_vars($this)),$exclude));
     }
     
-    public function toArray($include = [], $exclude = []){
+    /**
+     * Return the current object as an array
+     * @param array $include Names of keys/properties to specifically include
+     * @param array $exclude Names of keys/properties to specifically exclude
+     * @return array The current object represented as a key/value array
+     */
+    public function toArray(array $include = [], array $exclude = []){
         if($include === [] && $exclude === []){
             return array_filter(get_object_vars($this),[$this,"arrayFilter"]);
         } elseif($include === []){
@@ -37,15 +56,33 @@ abstract class BSON implements Persistable{
         }
     }
     
+    /**
+     * A filter to verify null values
+     * 
+     * When filtering the object as an array, most filters won't pass anything that acts as a false value,
+     * this includes false, 0 and empty strings. We currently only require that empty strings and null values be filtered out.
+     * 
+     * @param mixed $var
+     * @return bool
+     */
     protected function arrayFilter($var){
         return ($var !== NULL && $var !== '');
     }
     
+    /**
+     * Returns the current object as JSON text
+     * @return string The current object as JSON text
+     */
     public function __toString() {
         return "<pre>".  json_encode($this->toArray(), 128)."</pre>";
     }
     
-    public function stamp($fields = []){
+    /**
+     * Returns a small portion of the object as an array
+     * @param array $fields Names of fields to include
+     * @return array 
+     */
+    public function stamp(array $fields = []){
         $fields[] = "_id";
         return $this->toArray($fields);
     }
