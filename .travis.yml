@@ -7,7 +7,6 @@ before_script:
     - sudo apt-get update
     - sudo apt-get install -y mongodb-org
     - sleep 15
-    - pecl install mongodb
     - phpenv config-add travisConfig.ini
     - composer self-update
     - composer install --prefer-source --no-interaction
