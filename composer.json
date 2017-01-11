@@ -8,10 +8,10 @@
         }
     ],
     "require": {
-        "mongodb/mongodb": "1.0.0"
+        "mongodb/mongodb": "1.1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "4.0.*"
+        "phpunit/phpunit": "5.4.*"
     },
     "autoload":{
         "psr-4":{

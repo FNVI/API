@@ -35,9 +35,15 @@ class Update {
     }
     
     private function addOperator($operator, $value){
-        if(is_array($this->update[$operator]))
+       if(isset($this->update[$operator]))
         {
-            $this->update[$operator] += $value;
+            if(is_array($this->update[$operator])){
+                $this->update[$operator] += $value;
+            }
+            else
+            {
+                throw new Exception("Already set $operator operator");
+            }
         }
         else
         {

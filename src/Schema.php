@@ -1,11 +1,5 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace FNVi\Mongo;
 
 use FNVi\Mongo\Collection;
@@ -17,18 +11,24 @@ use MongoDB\BSON\UTCDateTime;
  *
  * @author Joe Wheatley <joew@fnvi.co.uk>
  */
-abstract class Schema extends Document {
+class Schema extends Document {
     
     /**
-     *
+     * Provides basic access to the collection this Schema works with
      * @var FNVi\Mongo\Collection 
      */
     public $collection;
     
-    public $collectionName;
+    /**
+     * Provides the name of the collection this Schema works with
+     * @var string The name of the collection
+     */
+    protected $collectionName;
     
-    protected $active = true;
-
+    /**
+     * 
+     * @param string $collection
+     */
     public function __construct($collection = "") {
         $this->collectionName = $collection;
         $name = $collection !== "" ? $collection : $this->className();
@@ -37,56 +37,62 @@ abstract class Schema extends Document {
     }
     
     /**
-     * 
-     * @return \FNVi\Mongo\Collection
+     * Returns the name of the schema. This may be unused in future, but is still here as a backup if a collection name isn't provided
+     * @return string
      */
-//    public function collection(){
-//        return $this->collection->collection();
-//    }
-    
     public function className(){
-        return array_pop(explode('\\',  strtolower(get_class($this))))."s";
+        $array = explode('\\',  strtolower(get_class($this)));
+        return array_pop($array)."s";
     }
-    
-    public static function find($query){
-        return self::collection()->find($query);
-    }
-    
+        
+    /**
+     * Returns the name of the Schema. This may be unused in future, but is still here as a backup if a collection name isn't provided
+     * @return string
+     */
     public static function getClass(){
-        $string = array_pop(explode('\\',  strtolower(get_called_class())));
+        $array = explode('\\',  strtolower(get_called_class()));
+        $string = array_pop($array);
         return substr($string, -1) === "s" ? $string : $string."s";
     }
     
-    static private function collection(){
-        if(!self::$coll)
-        {
-            self::$coll = new Collection(self::getClass());
-        }
-        return self::$coll;
-    }
-    
+    /**
+     * Removes the current item from the collection specified in the schema
+     * @return MongoDB\UpdateResult
+     */
     public function delete() {
         return $this->collection->removeOne(["_id"=>$this->_id]);
     }
     
+    /**
+     * Recovers the current item in the collection specified in the schema (if the document was marked inactive)
+     * @return MongoDB\UpdateResult
+     */
     public function recover(){
         return $this->collection->recoverOne(["_id"=>$this->_id]);
     }
     
+    /**
+     * Stores the current item in the collection specified in the schema
+     * @return MongoDB\UpdateResult
+     */
     public function store(){
         return $this->collection->findOneAndReplace(["_id"=>$this->_id], $this, ["upsert"=>true]);
     }
     
     protected static function loadFromID($id){
-        return $this->collection()->findOne(["_id"=>new ObjectID($id."")]);
+        return $this->collection->findOne(["_id"=>new ObjectID($id."")]);
     }
 
+    /**
+     * Returns the current time in the correct Mongo type
+     * @return UTCDateTime
+     */
     protected function timestamp(){
         return new UTCDateTime(time() * 1000);
     }
     
-    public function toArray($include = [], $exclude = []) {
-        return parent::toArray($include, $exclude += ["collection", "collectionName"]);
+    public function toArray(array $include = [], array $exclude = []) {
+        return parent::toArray($include, array_merge($exclude,["collection", "collectionName"]));
     }
     
     public function bsonUnserialize(array $data) {
@@ -94,8 +100,9 @@ abstract class Schema extends Document {
         parent::bsonUnserialize($data);
     }
     
-    protected function keys($exclude = []) {
-        return parent::keys($exclude += ["collection", "collectionName"]);
+    
+    public function keys(array $exclude = []) {
+        return parent::keys(array_merge($exclude, ["collection", "collectionName"]));
     }
     
     public static function getProperties(){

@@ -1,14 +1,8 @@
 <?php
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace FNVi\Mongo;
 use FNVi\Mongo\Tools\Update;
-use FNVi\Mongo\Tools\AggregateInterface;
+use FNVi\Mongo\Tools\AggregationPipeline;
 
 /**
  * Represents a MongoDB collection
@@ -34,7 +28,7 @@ class Collection extends Database {
      */
     protected $collectionName;
     
-    protected $query = ["active" => true];
+//    protected $query = ["active" => true];
 
     /**
      * Creates the collection object.
@@ -46,39 +40,43 @@ class Collection extends Database {
      */
     public function __construct($collection = "") {
         $this->collectionName = $collection !== "" ? $collection : $this->getCollectionName();
-        $this->collection = $this->setCollection($this->collectionName);
+        $this->collection = $this->selectCollection($this->collectionName);
+    }
+    
+    public function collectionName(){
+        return $this->collectionName;
     }
     
     /**
      * Returns a clone of the collection that allows inactive documents are returned
      * @return \FNVi\Mongo\Collection
      */
-    public function includeDeleted(){
-        $output = clone $this;
-        unset($output->query["active"]);
-        return $output;
-    }
+//    public function includeRemoved(){
+//        $output = clone $this;
+//        unset($output->query["active"]);
+//        return $output;
+//    }
     
     /**
      * Returns a clone of the collection where only inactive documents are returned
      * @return \FNVi\Mongo\Collection
      */
-    public function onlyDeleted(){
-        $output = clone $this;
-        $output->query["active"] = false;
-        return $output;
-    }
+//    public function onlyRemoved(){
+//        $output = clone $this;
+//        $output->query["active"] = false;
+//        return $output;
+//    }
     
     /**
      * Returns a clone of the collection where only active documents are returned
      * (only implemented as a precaution, as this is the default functionality)
      * @return \FNVi\Mongo\Collection
      */
-    public function onlyActive(){
-        $output = clone $this;
-        $output->query["active"] = true;
-        return $output;
-    }
+//    public function onlyActive(){
+//        $output = clone $this;
+//        $output->query["active"] = true;
+//        return $output;
+//    }
     
     /**
      * Gets a query object.
@@ -89,18 +87,26 @@ class Collection extends Database {
      * @return \FNVi\Mongo\Query
      */
     protected function query(array $query = []){
-        return new Query($this->collectionName, $query += $this->query);
+        return new Query($this->collectionName, $query);
     }
     
     /**
      * Wrapper for the aggregate function
      * 
-     * @param AggregateInterface $pipeline
+     * @param array $pipeline An aggregation pipeline in array format
      * @param array $options
-     * @return Traversible
+     * @return Traversable
      */
-    public function aggregate(AggregateInterface $pipeline ,array $options = []){
-        return $this->collection->aggregate($pipeline->getPipeline(), $options);
+    public function aggregate(array $pipeline ,array $options = []){
+        return $this->collection->aggregate($pipeline, $options);
+    }
+    
+    /**
+     * Returns an 
+     * @return AggregatePipeline
+     */
+    public function aggregationPipeline(){
+        return new AggregationPipeline($this);
     }
     
     /**
@@ -110,8 +116,8 @@ class Collection extends Database {
      * @param array $options
      * @return integer
      */
-    public function count($query, $options = []){
-        return $this->collection->count($query += $this->query, $options);
+    public function count($query = [], $options = []){
+        return $this->collection->count($query, $options);
     }
     
     /**
@@ -124,8 +130,8 @@ class Collection extends Database {
      * @param array $options
      * @return MongoDB\DeleteResult
      */
-    protected function deleteMany($query, $options = []){
-        return $this->collection->deleteMany($query += $this->query, $options);
+    public function deleteMany(array $query = [], array $options = []){
+        return $this->collection->deleteMany($query, $options);
     }
     
     /**
@@ -135,8 +141,8 @@ class Collection extends Database {
      * @param array $options
      * @return MongoDB\DeleteResult
      */
-    protected function deleteOne($query, $options) {
-        return $this->collection->deleteOne($query += $this->query, $options);
+    public function deleteOne(array $query, array $options = []) {
+        return $this->collection->deleteOne($query, $options);
     }
     
     /**
@@ -147,8 +153,8 @@ class Collection extends Database {
      * @param array $options
      * @return array
      */
-    public function distinct($fieldName, $query = [], $options = []){
-        return $this->collection->distinct($fieldName, $query += $this->query, $options);
+    public function distinct($fieldName, array $query = [], array $options = []){
+        return $this->collection->distinct($fieldName, $query, $options);
     }
     
     /**
@@ -159,7 +165,7 @@ class Collection extends Database {
      * @return MongoDB\Driver\Cursor
      */
     public function find($query = [], $options = []){
-        return $this->collection->find($query += $this->query, $options);
+        return $this->collection->find($query, $options);
     }
     
     /**
@@ -169,8 +175,8 @@ class Collection extends Database {
      * @param array $options
      * @return object
      */
-    public function findOne($query, $options = []){
-        return $this->collection->findOne($query += $this->query, $options);
+    public function findOne($query = [], $options = []){
+        return $this->collection->findOne($query, $options);
     }
     
     /**
@@ -181,7 +187,7 @@ class Collection extends Database {
      * @return MongoDB\DeleteResult
      */
     public function findOneAndDelete($query, $options=[]){
-        return $this->collection->findOneAndDelete($query += $this->query, $options);
+        return $this->collection->findOneAndDelete($query, $options);
     }
     
     /**
@@ -193,7 +199,7 @@ class Collection extends Database {
      * @return object
      */
     public function findOneAndReplace($query, $replacement, $options = [] ){
-        return $this->collection->findOneAndReplace($query += $this->query, $replacement, $options);
+        return $this->collection->findOneAndReplace($query, $replacement, $options);
     }
     
     /**
@@ -204,8 +210,8 @@ class Collection extends Database {
      * @param array $options
      * @return object
      */
-    public function findOneAndUpdate($query, $update, $options = []){
-        return $this->collection->findOneAndUpdate($query += $this->query, $update, $options);
+    public function findOneAndUpdate(array $query, array $update, array $options = []){
+        return $this->collection->findOneAndUpdate($query, $update, $options);
     }
     
     /**
@@ -215,7 +221,7 @@ class Collection extends Database {
      * @param array $options
      * @return MongoDB\InsertManyResult
      */
-    public function insertMany($documents, $options = []){
+    public function insertMany(array $documents, array $options = []){
         return $this->collection->insertMany($documents, $options);
     }
     
@@ -252,7 +258,7 @@ class Collection extends Database {
      * @return Update
      */
     public function update($query = []){
-        return new Update($this->collection, $query += $this->query);
+        return new Update($this->collection, $query);
     }
     
     /**
@@ -260,8 +266,8 @@ class Collection extends Database {
      * @param type $query
      * @return MongoDB\UpdateResult
      */
-    public function updateMany($query, $update, $options = []){
-        return $this->collection->updateMany($query += $this->query, $update, $options);
+    public function updateMany(array $query, $update, array $options = []){
+        return $this->collection->updateMany($query, $update, $options);
     }
     
     /**
@@ -269,8 +275,8 @@ class Collection extends Database {
      * @param type $query
      * @return MongoDB\UpdateResult
      */
-    public function updateOne($query, $update, $options = []){
-        return $this->collection->updateOne($query += $this->query, $update, $options);
+    public function updateOne(array $query, $update, array $options = []){
+        return $this->collection->updateOne($query, $update, $options);
     }
     
     /**
@@ -278,27 +284,28 @@ class Collection extends Database {
      * @return type
      */
     public function getCollectionName(){
-        $string = array_pop(explode('\\',  strtolower(get_called_class())));
+        $array = explode('\\',  strtolower(get_called_class()));
+        $string = array_pop($array);
         return substr($string, -1) === "s" ? $string : $string."s";
     }
     
-    public function recoverMany($query){
-        return $this->update($query)->recover()->updateMany();
-    }
-    
-    public function recoverOne($query){
-        return $this->update($query)->recover()->updateMany();
-    }
-    
-    public function removeOne($query){
-        return $this->update($query)->remove()->updateOne();
-    }
-    
-    public function removeMany($query){
-        return $this->update($query)->remove()->updateMany();
-    }
-    
-    public function flush(){
-        $this->onlyDeleted()->deleteMany([]);
-    }
+//    public function recoverMany($query){
+//        return $this->update($query)->recover()->updateMany();
+//    }
+//    
+//    public function recoverOne($query){
+//        return $this->update($query)->recover()->updateMany();
+//    }
+//    
+//    public function removeOne($query){
+//        return $this->update($query)->remove()->updateOne();
+//    }
+//    
+//    public function removeMany($query = []){
+//        return $this->update($query)->remove()->updateMany();
+//    }
+//    
+//    public function flush(){
+//        $this->onlyRemoved()->deleteMany([]);
+//    }
 }
