@@ -17,7 +17,7 @@ class AggregationPipeline {
      * 
      * @param Collection $collection
      */
-    public function __construct(Collection $collection) {
+    public function __construct(Collection $collection = null) {
         $this->collection = $collection;
     }
 
@@ -35,7 +35,10 @@ class AggregationPipeline {
      * @return Traversable
      */
     public function getCursor(array $options = []) {
-        return $this->collection->aggregate($this->pipeline, $options);
+        if($this->collection){
+            return $this->collection->aggregate($this->pipeline, $options);
+        }
+        throw new Exception("Collection not set in constructor");
     }
 
     /**
