@@ -17,7 +17,7 @@ class SchemaTest extends TestCase{
     protected $schema;
 
     public static function setUpBeforeClass() {
-        Database::connect("mongodb://testuser:testpassword@ds159188.mlab.com:59188/mongobasetest");
+        Database::connect("mongodb://localhost/testdb");
     }
     
     public static function tearDownAfterClass() {

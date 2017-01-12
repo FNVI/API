@@ -16,11 +16,7 @@ class AggregateTest extends TestCase{
      * @var AggregationPipeline
      */
     protected $aggregatePipeline;
-    
-    public static function setUpBeforeClass() {
-        Database::connect("mongodb://testuser:testpassword@ds159188.mlab.com:59188/mongobasetest");
-    }
-    
+
     public static function tearDownAfterClass() {
         Database::dropDatabase();
     }

@@ -16,7 +16,7 @@ class DatabaseTest extends TestCase{
     }
 
     public function testConnection(){
-        $uri = "mongodb://testuser:testpassword@ds159188.mlab.com:59188/mongobasetest";
+        $uri = "mongodb://localhost/testdb";
         $client = Database::connect($uri);
         $this->assertEquals($uri, "$client");
     }
