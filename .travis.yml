@@ -1,16 +1,10 @@
 language: php
 php:
-    - '5.4'
     - '5.6'
     - '7.0'
     - '7.1'
 before_script: 
-    - sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
-    - echo "deb [ arch=amd64 ] http://repo.mongodb.org/apt/ubuntu precise/mongodb-org/3.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.4.list
-    - sudo apt-get update
-    - sudo apt-get install -y mongodb-org
-    - sudo pecl install -y mongodb
-    - sleep 15
+    - ./mongo-installer.sh
     - phpenv config-add travisConfig.ini
     - composer self-update
     - composer install --prefer-source --no-interaction
