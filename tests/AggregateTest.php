@@ -16,14 +16,9 @@ class AggregateTest extends TestCase{
      * @var AggregationPipeline
      */
     protected $aggregatePipeline;
-
-    public static function tearDownAfterClass() {
-        Database::dropDatabase();
-    }
     
     protected function setUp(){
-        $collection = $this->getMockBuilder(Collection::class)->setMockClassName("AggregationTest")->getMockForAbstractClass();
-        $this->aggregatePipeline = new AggregationPipeline($collection);
+        $this->aggregatePipeline = new AggregationPipeline(null);
     }
     
     protected function tearDown() {
