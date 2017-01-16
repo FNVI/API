@@ -1,7 +1,5 @@
 <?php
 use PHPUnit\Framework\TestCase;
-use FNVi\Mongo\Database;
-use FNVi\Mongo\Collection;
 use FNVi\Mongo\Tools\AggregationPipeline;
 
 /**
