@@ -90,7 +90,7 @@ class Update {
     }
     
     public function pullAll($field, array $values){
-        return $this->pullAll('$pullAll', [$field=>$values]);
+        return $this->addOperator('$pullAll', [$field=>$values]);
     }
     
     public function pull($field, $value){
