@@ -26,7 +26,7 @@ class CollectionTest extends TestCase{
     }
         
     protected function tearDown() {
-        $this->collection->deleteMany();
+        $this->collection->deleteMany([]);
     }
     
     public function testClassName(){
@@ -113,7 +113,7 @@ class CollectionTest extends TestCase{
         $this->assertEquals($documents, iterator_to_array($findUpdatedResult), "find updated many");
         
         
-        $deleteResult = $this->collection->deleteMany();
+        $deleteResult = $this->collection->deleteMany([]);
         $this->assertEquals(5, $deleteResult->getDeletedCount(), "remove many");
         
         $findRemovedResult = $this->collection->findOne();
