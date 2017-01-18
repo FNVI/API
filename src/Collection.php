@@ -4,6 +4,7 @@ namespace FNVi\Mongo;
 use MongoDB\Collection as BaseCollection;
 use FNVi\Mongo\Tools\Update;
 use FNVi\Mongo\Tools\AggregationPipeline;
+use FNVi\Mongo\Tools\Query;
 
 /**
  * Represents a MongoDB collection
@@ -42,10 +43,10 @@ class Collection extends BaseCollection {
      * For further details on the query object see its entry in the documentation.
      * 
      * @param array $query
-     * @return \FNVi\Mongo\Query
+     * @return Query
      */
-    protected function query(array $query = []){
-        return new Query($this->collectionName, $query);
+    public function query(array $query = []){
+        return new Query($this, $query);
     }
     
     /**
@@ -68,7 +69,7 @@ class Collection extends BaseCollection {
      * @return Update
      */
     public function update($query = []){
-        return new Update($this->collection, $query);
+        return new Update($this, $query);
     }
     
     /**

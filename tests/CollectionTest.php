@@ -42,6 +42,16 @@ class CollectionTest extends TestCase{
         $this->assertEquals(\FNVi\Mongo\Tools\AggregationPipeline::class, get_class($actual), "Check aggregation pipeline object returned");
     }
     
+    public function testUpdate(){
+        $actual = $this->collection->update();
+        $this->assertEquals(\FNVi\Mongo\Tools\Update::class, get_class($actual), "Check update object returned");
+    }
+    
+    public function testQuery(){
+        $actual = $this->collection->query();
+        $this->assertEquals(\FNVi\Mongo\Tools\Query::class, get_class($actual), "Check query object returned");
+    }
+    
     public function testCRUDOne(){
         $document = new BSONDocument(["test"=>"insert one"]);
         
