@@ -24,8 +24,8 @@ abstract class BSON implements Persistable{
      */
     public function bsonUnserialize(array $data)
     {
-        foreach($this->keys() as $key){
-            if(isset($data[$key])){
+        foreach(array_keys($data) as $key){
+            if(isset($data[$key]) && $key !== '__pclass'){
                 $this->{$key} = $data[$key];
             }
         }
@@ -74,17 +74,9 @@ abstract class BSON implements Persistable{
      * @return string The current object as JSON text
      */
     public function __toString() {
-        return "<pre>".  json_encode($this->toArray(), 128)."</pre>";
+        return json_encode($this->toArray(), 128);
     }
     
-    /**
-     * Returns a small portion of the object as an array
-     * @param array $fields Names of fields to include
-     * @return array 
-     */
-    public function stamp(array $fields = []){
-        $fields[] = "_id";
-        return $this->toArray($fields);
-    }
+
     
 }
