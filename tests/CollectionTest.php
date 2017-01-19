@@ -16,25 +16,25 @@ class CollectionTest extends TestCase{
      * @var Collection
      */
     protected $collection;
+    
+    protected $collectionName = "testcollections";
+    protected $className = "TestCollection";
         
     public static function tearDownAfterClass() {
         Database::dropDatabase();
     }
     
     protected function setUp(){
-        $this->collection = $this->getMockBuilder(Collection::class)->setMockClassName("Test")->getMockForAbstractClass();
+        $this->collection = $this->getMockBuilder(Collection::class)->setMockClassName($this->className)->getMockForAbstractClass();
     }
         
     protected function tearDown() {
         $this->collection->deleteMany([]);
     }
     
-    public function testClassName(){
-        $actual = $this->collection->getCollectionName();
-        
-        $expected = "tests";
-        
-        $this->assertEquals($expected, $actual, "Check collection name is set correctly");
+    public function testConstructor(){
+        $this->assertEquals($this->collectionName, $this->collection->getCollectionName(), "Check collection name is set correctly");
+        $this->assertEquals($this->className, get_class($this->collection), "Check collection class name is correctly");
     }
     
     public function testAggregate(){
