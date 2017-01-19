@@ -9,6 +9,9 @@ use MongoDB\BSON\Persistable as Persistable;
  */
 abstract class BSON implements Persistable{
 
+    protected static $strict = false;
+
+
     /**
      * Serializes the object to an array
      * @return array
@@ -24,7 +27,7 @@ abstract class BSON implements Persistable{
      */
     public function bsonUnserialize(array $data)
     {
-        foreach(array_keys($data) as $key){
+        foreach((self::$strict ? $this->keys() : array_keys($data)) as $key){
             if(isset($data[$key]) && $key !== '__pclass'){
                 $this->{$key} = $data[$key];
             }
@@ -36,8 +39,8 @@ abstract class BSON implements Persistable{
      * @param array $exclude Names of keys to exclude from the result
      * @return array A list of keys/properties of the object
      */
-    protected function keys(array $exclude = []){
-        return array_values(array_diff(array_keys(get_object_vars($this)),$exclude));
+    public function keys(array $exclude = []){
+        return array_values(array_diff(array_keys($this->getVars($this)),$exclude));
     }
     
     /**
@@ -48,12 +51,16 @@ abstract class BSON implements Persistable{
      */
     public function toArray(array $include = [], array $exclude = []){
         if($include === [] && $exclude === []){
-            return array_filter(get_object_vars($this),[$this,"arrayFilter"]);
+            return array_filter($this->getVars($this),[$this,"arrayFilter"]);
         } elseif($include === []){
-            return array_filter(array_diff_key(get_object_vars($this), array_flip($exclude)),[$this,"arrayFilter"]);
+            return array_filter(array_diff_key($this->getVars($this), array_flip($exclude)),[$this,"arrayFilter"]);
         }  else {
-            return array_filter(array_intersect_key(get_object_vars($this), array_flip(array_diff($include, $exclude))),[$this,"arrayFilter"]);
+            return array_filter(array_intersect_key($this->getVars($this), array_flip(array_diff($include, $exclude))),[$this,"arrayFilter"]);
         }
+    }
+    
+    private function getVars(){
+        return self::$strict ? get_class_vars(get_class($this)) : get_object_vars($this);
     }
     
     /**
