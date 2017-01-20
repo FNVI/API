@@ -9,6 +9,8 @@ use MongoDB\BSON\Persistable as Persistable;
  */
 abstract class BSON implements Persistable{
 
+    protected static $strict = false;
+
     /**
      * Serializes the object to an array
      * @return array
@@ -24,8 +26,8 @@ abstract class BSON implements Persistable{
      */
     public function bsonUnserialize(array $data)
     {
-        foreach($this->keys() as $key){
-            if(isset($data[$key])){
+        foreach((self::$strict ? $this->keys() : array_keys($data)) as $key){
+            if(isset($data[$key]) && $key !== '__pclass' && $key !== 'strict'){
                 $this->{$key} = $data[$key];
             }
         }
@@ -36,8 +38,9 @@ abstract class BSON implements Persistable{
      * @param array $exclude Names of keys to exclude from the result
      * @return array A list of keys/properties of the object
      */
-    protected function keys(array $exclude = []){
-        return array_values(array_diff(array_keys(get_object_vars($this)),$exclude));
+    public function keys(array $exclude = []){
+        $exclude[] = "strict";
+        return array_values(array_diff(array_keys($this->getVars($this)),$exclude));
     }
     
     /**
@@ -47,13 +50,18 @@ abstract class BSON implements Persistable{
      * @return array The current object represented as a key/value array
      */
     public function toArray(array $include = [], array $exclude = []){
+        $exclude[] = "strict";
         if($include === [] && $exclude === []){
-            return array_filter(get_object_vars($this),[$this,"arrayFilter"]);
+            return array_filter($this->getVars($this),[$this,"arrayFilter"]);
         } elseif($include === []){
-            return array_filter(array_diff_key(get_object_vars($this), array_flip($exclude)),[$this,"arrayFilter"]);
+            return array_filter(array_diff_key($this->getVars($this), array_flip($exclude)),[$this,"arrayFilter"]);
         }  else {
-            return array_filter(array_intersect_key(get_object_vars($this), array_flip(array_diff($include, $exclude))),[$this,"arrayFilter"]);
+            return array_filter(array_intersect_key($this->getVars($this), array_flip(array_diff($include, $exclude))),[$this,"arrayFilter"]);
         }
+    }
+    
+    private function getVars(){
+        return self::$strict ? get_class_vars(get_class($this)) : get_object_vars($this);
     }
     
     /**
@@ -74,17 +82,11 @@ abstract class BSON implements Persistable{
      * @return string The current object as JSON text
      */
     public function __toString() {
-        return "<pre>".  json_encode($this->toArray(), 128)."</pre>";
+        return json_encode($this->toArray(), 128);
     }
     
-    /**
-     * Returns a small portion of the object as an array
-     * @param array $fields Names of fields to include
-     * @return array 
-     */
-    public function stamp(array $fields = []){
-        $fields[] = "_id";
-        return $this->toArray($fields);
+    public static function SetStrict($boolean){
+        self::$strict = $boolean;
     }
     
 }

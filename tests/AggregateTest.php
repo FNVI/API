@@ -1,7 +1,5 @@
 <?php
 use PHPUnit\Framework\TestCase;
-use FNVi\Mongo\Database;
-use FNVi\Mongo\Collection;
 use FNVi\Mongo\Tools\AggregationPipeline;
 
 /**
@@ -17,17 +15,8 @@ class AggregateTest extends TestCase{
      */
     protected $aggregatePipeline;
     
-    public static function setUpBeforeClass() {
-        Database::connect("mongodb://testuser:testpassword@ds159188.mlab.com:59188/mongobasetest");
-    }
-    
-    public static function tearDownAfterClass() {
-        Database::dropDatabase();
-    }
-    
     protected function setUp(){
-        $collection = $this->getMockBuilder(Collection::class)->setMockClassName("AggregationTest")->getMockForAbstractClass();
-        $this->aggregatePipeline = new AggregationPipeline($collection);
+        $this->aggregatePipeline = new AggregationPipeline(null);
     }
     
     protected function tearDown() {

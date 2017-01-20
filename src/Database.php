@@ -53,18 +53,20 @@ abstract class Database {
     public static function createMongoURI(array $servers, $database = null, $username = null, $password = null, array $options = []){
         return "mongodb://". ($username && $password ? "$username:$password@" : ""). implode(",", $servers) . ($database ? "/$database" : "") . (count($options) ? "?".http_build_query($options) : "");
     }
-    
-    /**
-     * Returns a collection object to be used in derived classes
-     * 
-     * @param string $name
-     * @return MongoDB\Collection
-     */
-    protected function selectCollection($name) {
-        return self::$client->selectCollection(self::$database,$name);
-    }
-    
+        
     public static function dropDatabase(){
         self::$client->dropDatabase(self::$database);
+    }
+    
+    /**
+     * 
+     * @return \MongoDB\Driver\Manager
+     */
+    public static function getManager(){
+        return self::$client->getManager();
+    }
+    
+    public static function getDatabase(){
+        return self::$database;
     }
 }

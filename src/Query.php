@@ -16,6 +16,7 @@ class Query extends Collection implements Iterator{
      * @var \MongoDB\Driver\Cursor 
      */
     private $cursor;
+    protected $query = [];
     private $options = [];
     
     public function __construct($collection = "", $query = []) {
@@ -53,7 +54,7 @@ class Query extends Collection implements Iterator{
     }
 
     public function rewind() {
-        $this->cursor = new \IteratorIterator($this->find($this->query,[]));
+        $this->cursor = new \IteratorIterator($this->find($this->query,$this->options));
         return $this->cursor->rewind();
     }
 
@@ -61,4 +62,7 @@ class Query extends Collection implements Iterator{
         return $this->cursor->valid();
     }
 
+    public function getQuery(){
+        return $this->query;
+    }
 }

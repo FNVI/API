@@ -14,42 +14,49 @@ use MongoDB\BSON\UTCDateTime;
 class Schema extends Document {
     
     /**
-     * Provides basic access to the collection this Schema works with
-     * @var FNVi\Mongo\Collection 
+     * Provides basic access to the collection this Schema works with, for 
+     * advanced usage, the collection property should be set with the specific 
+     * class type.
+     * 
+     * @var Collection 
      */
-    public $collection;
+    protected $collection;
     
+    /**
+     *
+     * @var Collection
+     */
+    protected static $collectionStatic;
+
+
     /**
      * Provides the name of the collection this Schema works with
      * @var string The name of the collection
      */
-    protected $collectionName;
+    protected static $collectionName;
     
     /**
      * 
-     * @param string $collection
+     * @param Collection $collection
      */
-    public function __construct($collection = "") {
-        $this->collectionName = $collection;
-        $name = $collection !== "" ? $collection : $this->className();
-        $this->collection = new Collection($name);
+    public function __construct(Collection $collection = null) {
+        self::$collectionName = $collection ? $collection->getCollectionName() : null;
+        $this->collection = $collection ?: self::Collection();
         parent::__construct();
     }
-    
-    /**
-     * Returns the name of the schema. This may be unused in future, but is still here as a backup if a collection name isn't provided
-     * @return string
-     */
-    public function className(){
-        $array = explode('\\',  strtolower(get_class($this)));
-        return array_pop($array)."s";
+        
+    private static function Collection(){
+        if(!self::$collectionStatic){
+            self::$collectionStatic = new Collection(self::$collectionName ?: self::getClass());
+        }
+        return self::$collectionStatic;
     }
         
     /**
      * Returns the name of the Schema. This may be unused in future, but is still here as a backup if a collection name isn't provided
      * @return string
      */
-    public static function getClass(){
+    private static function getClass(){
         $array = explode('\\',  strtolower(get_called_class()));
         $string = array_pop($array);
         return substr($string, -1) === "s" ? $string : $string."s";
@@ -57,30 +64,23 @@ class Schema extends Document {
     
     /**
      * Removes the current item from the collection specified in the schema
-     * @return MongoDB\UpdateResult
+     * @return \MongoDB\DeleteResult
      */
     public function delete() {
-        return $this->collection->removeOne(["_id"=>$this->_id]);
+        return $this->collection->deleteOne(["_id"=>$this->_id]);
     }
-    
+       
     /**
-     * Recovers the current item in the collection specified in the schema (if the document was marked inactive)
-     * @return MongoDB\UpdateResult
+     * Saves the current item in the collection specified in the schema
+     * @return \MongoDB\UpdateResult
      */
-    public function recover(){
-        return $this->collection->recoverOne(["_id"=>$this->_id]);
-    }
-    
-    /**
-     * Stores the current item in the collection specified in the schema
-     * @return MongoDB\UpdateResult
-     */
-    public function store(){
+    public function save(){
         return $this->collection->findOneAndReplace(["_id"=>$this->_id], $this, ["upsert"=>true]);
     }
     
-    protected static function loadFromID($id){
-        return $this->collection->findOne(["_id"=>new ObjectID($id."")]);
+    public static function loadFromID($id){
+        $collection = self::Collection();
+        return $collection->findOne(["_id"=>new ObjectID($id."")]);
     }
 
     /**
@@ -92,20 +92,25 @@ class Schema extends Document {
     }
     
     public function toArray(array $include = [], array $exclude = []) {
-        return parent::toArray($include, array_merge($exclude,["collection", "collectionName"]));
+        return parent::toArray($include, array_merge($exclude,["collection", "collectionName", "collectionStatic"]));
     }
     
+    
     public function bsonUnserialize(array $data) {
-        $this->collection = new Collection($this->collectionName ? $this->collectionName : $this->className());
+        $this->collection = self::Collection();
         parent::bsonUnserialize($data);
     }
     
     
     public function keys(array $exclude = []) {
-        return parent::keys(array_merge($exclude, ["collection", "collectionName"]));
+        return parent::keys(array_merge($exclude, ["collection", "collectionName", "collectionStatic"]));
     }
     
     public static function getProperties(){
         return array_keys(get_class_vars(get_called_class()));
+    }
+    
+    public function getCollectionName(){
+        return $this->collection->getCollectionName();
     }
 }

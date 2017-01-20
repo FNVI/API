@@ -17,33 +17,39 @@ class CollectionTest extends TestCase{
      */
     protected $collection;
     
-    public static function setUpBeforeClass() {
-        Database::connect("mongodb://testuser:testpassword@ds159188.mlab.com:59188/mongobasetest");
-    }
-    
+    protected $collectionName = "testcollections";
+    protected $className = "TestCollection";
+        
     public static function tearDownAfterClass() {
         Database::dropDatabase();
     }
     
     protected function setUp(){
-        $this->collection = $this->getMockBuilder(Collection::class)->setMockClassName("Test")->getMockForAbstractClass();
+        $this->collection = $this->getMockBuilder(Collection::class)->setMockClassName($this->className)->getMockForAbstractClass();
     }
         
     protected function tearDown() {
-        $this->collection->deleteMany();
+        $this->collection->deleteMany([]);
     }
     
-    public function testClassName(){
-        $actual = $this->collection->getCollectionName();
-        
-        $expected = "tests";
-        
-        $this->assertEquals($expected, $actual, "Check collection name is set correctly");
+    public function testConstructor(){
+        $this->assertEquals($this->collectionName, $this->collection->getCollectionName(), "Check collection name is set correctly");
+        $this->assertEquals($this->className, get_class($this->collection), "Check collection class name is correctly");
     }
     
     public function testAggregate(){
         $actual = $this->collection->aggregationPipeline();
         $this->assertEquals(\FNVi\Mongo\Tools\AggregationPipeline::class, get_class($actual), "Check aggregation pipeline object returned");
+    }
+    
+    public function testUpdate(){
+        $actual = $this->collection->update();
+        $this->assertEquals(\FNVi\Mongo\Tools\Update::class, get_class($actual), "Check update object returned");
+    }
+    
+    public function testQuery(){
+        $actual = $this->collection->query();
+        $this->assertEquals(\FNVi\Mongo\Tools\Query::class, get_class($actual), "Check query object returned");
     }
     
     public function testCRUDOne(){
@@ -117,7 +123,7 @@ class CollectionTest extends TestCase{
         $this->assertEquals($documents, iterator_to_array($findUpdatedResult), "find updated many");
         
         
-        $deleteResult = $this->collection->deleteMany();
+        $deleteResult = $this->collection->deleteMany([]);
         $this->assertEquals(5, $deleteResult->getDeletedCount(), "remove many");
         
         $findRemovedResult = $this->collection->findOne();

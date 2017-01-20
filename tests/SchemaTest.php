@@ -3,6 +3,7 @@ use PHPUnit\Framework\TestCase;
 use FNVi\Mongo\Database;
 use FNVi\Mongo\Collection;
 use FNVi\Mongo\Schema;
+use FNVi\Mongo\BSON;
 /**
  * Description of SchemaTest
  *
@@ -15,9 +16,12 @@ class SchemaTest extends TestCase{
      * @var Schema
      */
     protected $schema;
+    
+    protected $collectionName = "testschemas";
+    protected $className = "TestSchema";
 
     public static function setUpBeforeClass() {
-        Database::connect("mongodb://testuser:testpassword@ds159188.mlab.com:59188/mongobasetest");
+        Database::connect("mongodb://localhost/testdb");
     }
     
     public static function tearDownAfterClass() {
@@ -25,55 +29,69 @@ class SchemaTest extends TestCase{
     }
     
     protected function setUp() {
-        $this->schema = $this->getMockBuilder(Schema::class)->setMockClassName("Test")->getMockForAbstractClass();
+        $this->schema = $this->getMockBuilder(Schema::class)->setMockClassName($this->className)->getMockForAbstractClass();
     }
     
-//    public function testClassName(){
-//        $this->assertEquals("tests", $this->schema->className());
-//    }
-//    
-    public function testGetClass(){
-        $this->assertEquals("schemas", Schema::getClass(), "get class static");
+    public function testConstructor(){
+        $collectionName = "someRandomCollectionName";
+        $collection = new Collection($collectionName);
+        $schema = $this->getMockBuilder(Schema::class)->setConstructorArgs([$collection])->getMockForAbstractClass();
+        $this->assertEquals($collectionName, $schema->getCollectionName(), "Check collection can be set from passing in a Collection object");
+    }
+                
+    public function testCollectionName(){
+        $this->assertEquals($this->collectionName, $this->schema->getCollectionName(), "check collection name is the same set by the mock");
     }
     
-//    public function testCollection(){
-//        $actual = $this->schema->collection->collectionName();
-//        $excpected = "tests";
-//        $this->assertEquals($excpected, $actual);
-//        $this->assertEquals(Collection::class, get_class($this->schema->collection));
-//    }
+    public function testSave() {
+        $this->schema->property = "whatever";
+        $this->schema->save();
+        return $this->schema;
+    }
     
-//   
-//    public function testToArray(){
-//        $expected = ["_id"=>$this->schema->getId()];
-//        $this->assertEquals($expected, $this->schema->toArray());
-//        
-//        $expected += ["field1"=>"field1"];
-//        $this->schema->field1 = "field1";
-//        $this->schema->field2 = "field2";
-//        
-//        $this->assertEquals($expected, $this->schema->toArray([], ["field2"]));
-//        $expected += ["field2"=>"field2"];
-//        
-//        $this->assertEquals($expected, $this->schema->toArray());
-//        $this->assertEquals(["active"=>true], $this->schema->toArray(["active"]));
-//    }
-//    
-//    public function testKeys(){
-//        $expected = ["_id","active","field1","field2"];
-//        $exclude = [];
-//        foreach($expected as $e){
-//            $this->assertEquals($expected, $this->schema->keys($exclude), '', 0.0, 10, true);
-//            $exclude[] = array_pop($expected);
-//        }
-//        
-//    }
-//    
-//    public function testGetProperties(){
-//        $expected = ["_id","collection", "collectionName","active"];
-//        $actual = Schema::getProperties();
-//        $this->assertEquals($expected, $actual, '', 0.0, 10, true);
-//        
-//    }
+    /**
+     * @depends testSave
+     * @param Schema $schema
+     * @return Schema
+     */
+    public function testLoad(Schema $schema){
+        $newObject = Schema::loadFromID($schema->_id);
+        $this->assertEquals($schema, $newObject, "saved and loaded");
+        $this->assertEquals($this->collectionName, $newObject->getCollectionName(), "Check collection is set");
+        $this->assertEquals($this->className, get_class($newObject), "Check correct class name");
+        return $schema;
+    }
+    
+    /**
+     * @depends testLoad
+     * @param Schema $schema
+     * @return Schema
+     */
+    public function testUpdate(Schema $schema){
+        $schema->property = "something else";
+        $schema->save();
+        $loaded = Schema::loadFromID($schema->_id);
+        $this->assertEquals($schema, $loaded, "saved and loaded after changes made");
+        $this->assertEquals("something else", $loaded->property, "check new object is not the same as the old object");
+        return $loaded;
+    }
+    /**
+     * @depends testUpdate
+     * @param Schema $schema
+     */
+    public function testDelete(Schema $schema){
+        $result = $schema->delete();
+        $this->assertEquals(1, $result->getDeletedCount());
+        $this->assertNull(Schema::loadFromID($schema->_id), "null after deletion");
+    }
+    
+    public function testToArray(){
+        $this->schema->testProperty = "testValue";
+        $expected = [
+            "_id"=>$this->schema->_id,
+            "testProperty"=>"testValue"
+        ];
+        $this->assertEquals($expected, $this->schema->toArray(), "check all properties are returned");
+    }
     
 }
