@@ -3,6 +3,7 @@ use PHPUnit\Framework\TestCase;
 use FNVi\Mongo\Database;
 use FNVi\Mongo\Collection;
 use FNVi\Mongo\Schema;
+use FNVi\Mongo\BSON;
 /**
  * Description of SchemaTest
  *
@@ -37,34 +38,7 @@ class SchemaTest extends TestCase{
         $schema = $this->getMockBuilder(Schema::class)->setConstructorArgs([$collection])->getMockForAbstractClass();
         $this->assertEquals($collectionName, $schema->getCollectionName(), "Check collection can be set from passing in a Collection object");
     }
-            
-    public function testToArray() {
-        $this->schema->testProperty = "testValue";
-        $this->schema->testPropertyHidden = "testValue";
-        $this->schema->testPropertyChosen = "testValue";
-        $expected = [
-            "_id" => $this->schema->_id,
-            "testProperty"=>"testValue",
-            "testPropertyHidden"=>"testValue",
-            "testPropertyChosen"=>"testValue"
-        ];
-        $this->assertEquals($expected, $this->schema->toArray(), "check all properties are returned");
-        unset($expected["testPropertyHidden"]);
-        $this->assertEquals($expected, $this->schema->toArray([], ["testPropertyHidden"]), "check excluded properties aren't returned");
-        unset($expected["_id"]);
-        unset($expected["testProperty"]);
-        $this->assertEquals($expected, $this->schema->toArray(["testPropertyChosen"]), "check included properties only are returned");
-    }
-    
-    public function testKeys(){
-        $this->schema->testProperty = "testValue";
-        $this->schema->testPropertyHidden = "testValue";
-        $expected = ['_id',"testProperty","testPropertyHidden"];
-        $this->assertEquals($expected, $this->schema->keys(), "check all keys are returned");
-        array_pop($expected);
-        $this->assertEquals($expected, $this->schema->keys(["testPropertyHidden"]), "check excluded keys aren't returned");
-    }
-    
+                
     public function testCollectionName(){
         $this->assertEquals($this->collectionName, $this->schema->getCollectionName(), "check collection name is the same set by the mock");
     }
@@ -109,6 +83,15 @@ class SchemaTest extends TestCase{
         $result = $schema->delete();
         $this->assertEquals(1, $result->getDeletedCount());
         $this->assertNull(Schema::loadFromID($schema->_id), "null after deletion");
+    }
+    
+    public function testToArray(){
+        $this->schema->testProperty = "testValue";
+        $expected = [
+            "_id"=>$this->schema->_id,
+            "testProperty"=>"testValue"
+        ];
+        $this->assertEquals($expected, $this->schema->toArray(), "check all properties are returned");
     }
     
 }

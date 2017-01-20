@@ -11,7 +11,6 @@ abstract class BSON implements Persistable{
 
     protected static $strict = false;
 
-
     /**
      * Serializes the object to an array
      * @return array
@@ -28,7 +27,7 @@ abstract class BSON implements Persistable{
     public function bsonUnserialize(array $data)
     {
         foreach((self::$strict ? $this->keys() : array_keys($data)) as $key){
-            if(isset($data[$key]) && $key !== '__pclass'){
+            if(isset($data[$key]) && $key !== '__pclass' && $key !== 'strict'){
                 $this->{$key} = $data[$key];
             }
         }
@@ -40,6 +39,7 @@ abstract class BSON implements Persistable{
      * @return array A list of keys/properties of the object
      */
     public function keys(array $exclude = []){
+        $exclude[] = "strict";
         return array_values(array_diff(array_keys($this->getVars($this)),$exclude));
     }
     
@@ -50,6 +50,7 @@ abstract class BSON implements Persistable{
      * @return array The current object represented as a key/value array
      */
     public function toArray(array $include = [], array $exclude = []){
+        $exclude[] = "strict";
         if($include === [] && $exclude === []){
             return array_filter($this->getVars($this),[$this,"arrayFilter"]);
         } elseif($include === []){
@@ -84,6 +85,8 @@ abstract class BSON implements Persistable{
         return json_encode($this->toArray(), 128);
     }
     
-
+    public static function SetStrict($boolean){
+        self::$strict = $boolean;
+    }
     
 }

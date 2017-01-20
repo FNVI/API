@@ -92,7 +92,7 @@ class Schema extends Document {
     }
     
     public function toArray(array $include = [], array $exclude = []) {
-        return parent::toArray($include, array_merge($exclude,["collection", "collectionName"]));
+        return parent::toArray($include, array_merge($exclude,["collection", "collectionName", "collectionStatic"]));
     }
     
     
@@ -103,7 +103,7 @@ class Schema extends Document {
     
     
     public function keys(array $exclude = []) {
-        return parent::keys(array_merge($exclude, ["collection", "collectionName"]));
+        return parent::keys(array_merge($exclude, ["collection", "collectionName", "collectionStatic"]));
     }
     
     public static function getProperties(){
