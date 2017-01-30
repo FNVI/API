@@ -2,6 +2,7 @@
 
 namespace FNVi\Mongo;
 
+use FNVi\Mongo\Stamp;
 use MongoDB\BSON\ObjectID;
 
 /**
@@ -33,12 +34,21 @@ abstract class Document extends BSON{
         return $this->_id;
     }
     
+//    /**
+//     * Returns a small portion of the object as an array
+//     * @param array $fields Names of fields to include
+//     * @return array 
+//     */
+//    public function stamp(array $fields = []){
+//        return $this->toArray(array_merge(["_id"],$fields));
+//    }
+    
     /**
-     * Returns a small portion of the object as an array
+     * Returns a small portion of the object as stamp
      * @param array $fields Names of fields to include
-     * @return array 
+     * @return Stamp 
      */
     public function stamp(array $fields = []){
-        return $this->toArray(array_merge(["_id"],$fields));
+        return new Stamp($this->toArray(array_merge(["_id"],$fields)));
     }
 }
