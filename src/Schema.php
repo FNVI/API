@@ -52,6 +52,10 @@ class Schema extends Document {
     public static function getCollectionName(){
         return static::$collectionName;
     }
+    
+    public function collectionName(){
+        return $this->collection->getCollectionName();
+    }
         
     /**
      * Returns the name of the Schema. This may be unused in future, but is still here as a backup if a collection name isn't provided
@@ -80,7 +84,12 @@ class Schema extends Document {
     }
     
     public static function loadFromID($id){
-        return static::Collection()->findOne(["_id"=>new ObjectID($id."")],["typeMap"=>["array"=>"array"]]);
+        $collection = static::Collection();
+        $object = $collection->findOne(["_id"=>new ObjectID($id."")],["typeMap"=>["array"=>"array"]]);
+        if($object){
+            $object->collection = $collection;
+        }
+        return $object;
     }
 
     /**

@@ -36,11 +36,11 @@ class SchemaTest extends TestCase{
         $collectionName = "someRandomCollectionName";
         $collection = new Collection($collectionName);
         $schema = $this->getMockBuilder(Schema::class)->setConstructorArgs([$collection])->getMockForAbstractClass();
-        $this->assertEquals($collectionName, $schema->getCollectionName(), "Check collection can be set from passing in a Collection object");
+        $this->assertEquals($collectionName, $schema->collectionName(), "Check collection can be set from passing in a Collection object");
     }
                 
     public function testCollectionName(){
-        $this->assertEquals($this->collectionName, $this->schema->getCollectionName(), "check collection name is the same set by the mock");
+        $this->assertEquals($this->collectionName, $this->schema->collectionName(), "check collection name is the same set by the mock");
     }
     
     public function testSave() {
@@ -55,11 +55,11 @@ class SchemaTest extends TestCase{
      * @return Schema
      */
     public function testLoad(Schema $schema){
-        $newObject = Schema::loadFromID($schema->_id);
+        $newObject = $schema::loadFromID($schema->_id);
         $this->assertEquals($schema, $newObject, "saved and loaded");
-        $this->assertEquals($this->collectionName, $newObject->getCollectionName(), "Check collection is set");
+        $this->assertEquals($this->collectionName, $newObject->collectionName(), "Check collection is set");
         $this->assertEquals($this->className, get_class($newObject), "Check correct class name");
-        return $schema;
+        return $newObject;
     }
     
     /**
@@ -70,7 +70,7 @@ class SchemaTest extends TestCase{
     public function testUpdate(Schema $schema){
         $schema->property = "something else";
         $schema->save();
-        $loaded = Schema::loadFromID($schema->_id);
+        $loaded = $schema::loadFromID($schema->_id);
         $this->assertEquals($schema, $loaded, "saved and loaded after changes made");
         $this->assertEquals("something else", $loaded->property, "check new object is not the same as the old object");
         return $loaded;
@@ -82,7 +82,7 @@ class SchemaTest extends TestCase{
     public function testDelete(Schema $schema){
         $result = $schema->delete();
         $this->assertEquals(1, $result->getDeletedCount());
-        $this->assertNull(Schema::loadFromID($schema->_id), "null after deletion");
+        $this->assertNull($schema::loadFromID($schema->_id), "null after deletion");
     }
     
     public function testToArray(){
