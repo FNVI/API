@@ -46,10 +46,7 @@ class Schema extends Document {
     }
         
     private static function Collection(){
-        if(!self::$collectionStatic){
-            self::$collectionStatic = new Collection(self::$collectionName ?: self::getClass());
-        }
-        return self::$collectionStatic;
+        return new Collection(self::$collectionName ?: self::getClass());
     }
         
     /**
