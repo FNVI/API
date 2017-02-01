@@ -3,6 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use FNVi\Mongo\Document;
 use MongoDB\BSON\ObjectID;
+use FNVi\Mongo\Stamp;
 /**
  * Description of DocumentTest
  *
@@ -24,16 +25,7 @@ class DocumentTest extends TestCase{
     }
     
     public function testStamp(){
-        $this->document->propertyHidden = "testValue";
-        $this->document->propertyChosen = "testValue";
-        $expected = [
-            "_id" => $this->document->_id,
-            "propertyChosen"=>"testValue"
-        ];
-        
-        $this->assertEquals($expected, $this->document->stamp(["propertyChosen"]));
-        unset($expected["propertyChosen"]);
-        $this->assertEquals($expected, $this->document->stamp());
+        $this->assertEquals(Stamp::class, get_class($this->document->stamp()));
     }
     
     
