@@ -23,6 +23,13 @@ class Schema extends Document {
     protected $collection;
     
     /**
+     *
+     * @var Collection
+     */
+    protected static $collectionStatic;
+
+
+    /**
      * Provides the name of the collection this Schema works with
      * @var string The name of the collection
      */
@@ -33,13 +40,16 @@ class Schema extends Document {
      * @param Collection $collection
      */
     public function __construct(Collection $collection = null) {
-        static::$collectionName = $collection ? $collection->getCollectionName() : null;
+        self::$collectionName = $collection ? $collection->getCollectionName() : null;
         $this->collection = $collection ?: self::Collection();
         parent::__construct();
     }
         
     private static function Collection(){
-        return new Collection(static::$collectionName ?: self::getClass());
+        if(!self::$collectionStatic){
+            self::$collectionStatic = new Collection(self::$collectionName ?: self::getClass());
+        }
+        return self::$collectionStatic;
     }
         
     /**
@@ -93,7 +103,7 @@ class Schema extends Document {
     
     
     public function keys(array $exclude = []) {
-        return parent::keys(array_merge($exclude, ["collection", "collectionName"]));
+        return parent::keys(array_merge($exclude, ["collection", "collectionName", "collectionStatic"]));
     }
     
     public static function getProperties(){
