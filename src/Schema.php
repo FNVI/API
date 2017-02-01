@@ -23,13 +23,6 @@ class Schema extends Document {
     protected $collection;
     
     /**
-     *
-     * @var Collection
-     */
-    protected static $collectionStatic;
-
-
-    /**
      * Provides the name of the collection this Schema works with
      * @var string The name of the collection
      */
@@ -40,16 +33,24 @@ class Schema extends Document {
      * @param Collection $collection
      */
     public function __construct(Collection $collection = null) {
-        self::$collectionName = $collection ? $collection->getCollectionName() : null;
-        $this->collection = $collection ?: self::Collection();
+        $this->collection = $collection ?: static::Collection();
         parent::__construct();
     }
         
+    /**
+     * 
+     * @return Collection
+     */
     private static function Collection(){
-        if(!self::$collectionStatic){
-            self::$collectionStatic = new Collection(self::$collectionName ?: self::getClass());
-        }
-        return self::$collectionStatic;
+        return new Collection(static::$collectionName ?: static::getClass());
+    }
+    
+    public static function setCollectionName($name){
+        static::$collectionName = $name;
+    }
+    
+    public static function getCollectionName(){
+        return static::$collectionName;
     }
         
     /**
@@ -79,8 +80,7 @@ class Schema extends Document {
     }
     
     public static function loadFromID($id){
-        $collection = self::Collection();
-        return $collection->findOne(["_id"=>new ObjectID($id."")]);
+        return static::Collection()->findOne(["_id"=>new ObjectID($id."")],["typeMap"=>["array"=>"array"]]);
     }
 
     /**
@@ -97,7 +97,7 @@ class Schema extends Document {
     
     
     public function bsonUnserialize(array $data) {
-        $this->collection = self::Collection();
+        $this->collection = new Collection(static::$collectionName);
         parent::bsonUnserialize($data);
     }
     
@@ -110,7 +110,4 @@ class Schema extends Document {
         return array_keys(get_class_vars(get_called_class()));
     }
     
-    public function getCollectionName(){
-        return $this->collection->getCollectionName();
-    }
 }
